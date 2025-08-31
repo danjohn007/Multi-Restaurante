@@ -1,0 +1,51 @@
+# Multi-Restaurant System Git Ignore
+
+# Database
+config/database.php
+.env
+.env.local
+
+# Cache and temporary files
+cache/
+tmp/
+temp/
+logs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Upload directories
+uploads/
+public/uploads/
+
+# Compiled CSS and JS (if using build tools)
+/public/css/compiled/
+/public/js/compiled/
+
+# Dependencies (if using composer or npm)
+vendor/
+node_modules/
+composer.lock
+package-lock.json
+
+# Error logs
+error.log
+debug.log
+*.log
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Test files
+tests/temp/
+coverage/
