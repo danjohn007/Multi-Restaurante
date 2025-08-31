@@ -6,11 +6,16 @@ class Controller {
     protected $db;
     
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        try {
+            $this->db = Database::getInstance()->getConnection();
+        } catch (Exception $e) {
+            // Database connection failed - this will be handled at a higher level
+            $this->db = null;
+        }
     }
     
     protected function loadModel($model) {
-        $modelFile = __DIR__ . '/models/' . $model . '.php';
+        $modelFile = __DIR__ . '/../models/' . $model . '.php';
         if (file_exists($modelFile)) {
             require_once $modelFile;
             return new $model();
@@ -20,7 +25,7 @@ class Controller {
     
     protected function loadView($view, $data = []) {
         extract($data);
-        $viewFile = __DIR__ . '/views/' . $view . '.php';
+        $viewFile = __DIR__ . '/../views/' . $view . '.php';
         if (file_exists($viewFile)) {
             include $viewFile;
         } else {
