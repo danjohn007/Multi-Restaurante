@@ -69,7 +69,7 @@ class Router {
         $actionName = isset($parts[1]) ? $parts[1] : 'index';
         $params = array_slice($parts, 2);
         
-        $controllerFile = __DIR__ . '/controllers/' . $controllerName . 'Controller.php';
+        $controllerFile = __DIR__ . '/../app/controllers/' . $controllerName . 'Controller.php';
         
         if (file_exists($controllerFile)) {
             require_once $controllerFile;
@@ -98,11 +98,12 @@ class Router {
                 $controllerName = $parts[0];
                 $actionName = $parts[1];
                 
-                $controllerFile = __DIR__ . '/controllers/' . $controllerName . '.php';
+                $controllerFile = __DIR__ . '/../app/controllers/' . $controllerName . '.php';
                 if (file_exists($controllerFile)) {
                     require_once $controllerFile;
                     $controller = new $controllerName();
                     call_user_func_array([$controller, $actionName], $params);
+                    return;
                 }
             }
         }
