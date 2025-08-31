@@ -292,7 +292,7 @@ INSERT INTO `reservations` (`restaurant_id`, `customer_id`, `customer_name`, `cu
 
 -- Insert sample bills (completed reservations)
 INSERT INTO `bills` (`reservation_id`, `restaurant_id`, `customer_id`, `total_amount`, `payment_method`, `closed_by_user_id`, `closed_at`) VALUES
-(1, 1, 1, 850.00, 'Tarjeta', 4, DATE_SUB(NOW(), INTERVAL 2 HOURS)),
+(1, 1, 1, 850.00, 'Tarjeta', 4, DATE_SUB(NOW(), INTERVAL 2 HOUR)),
 (2, 2, 2, 1200.00, 'Efectivo', 5, DATE_SUB(NOW(), INTERVAL 1 HOUR));
 
 -- Insert sample customer segments
