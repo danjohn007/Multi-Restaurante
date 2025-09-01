@@ -250,9 +250,5 @@ class AdminController extends Controller {
         $this->loadView('admin/reports', $data);
         $this->loadView('layout/footer');
     }
-    
-    private function getUserRestaurantId() {
-        return $_SESSION['user']['restaurant_id'] ?? null;
-    }
 }
 ?>
