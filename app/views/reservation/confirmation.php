@@ -14,139 +14,173 @@
         </div>
     </div>
 
-    <!-- Reservation Details Card -->
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-6">
-            <div class="card shadow-lg">
-                <div class="card-header bg-success text-white text-center">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="fas fa-calendar-check"></i> Detalles de la Reservación
+                        <i class="fas fa-calendar-check text-success"></i> Detalles de la Reservación
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Número de Reservación:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <span class="badge bg-primary"><?php echo sprintf('RES-%06d', $reservation['id']); ?></span>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Restaurante:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <?php echo htmlspecialchars($reservation['restaurant_name'] ?? 'Restaurante'); ?>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Cliente:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <?php echo htmlspecialchars($reservation['customer_name']); ?>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Teléfono:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <?php echo htmlspecialchars($reservation['customer_phone']); ?>
-                        </div>
-                    </div>
-                    
-                    <?php if (!empty($reservation['customer_email'])): ?>
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Email:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <?php echo htmlspecialchars($reservation['customer_email']); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Fecha:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <i class="fas fa-calendar text-primary"></i>
-                            <?php echo date('d/m/Y', strtotime($reservation['reservation_date'])); ?>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Hora:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <i class="fas fa-clock text-primary"></i>
-                            <?php echo date('H:i', strtotime($reservation['reservation_time'])); ?>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Número de Personas:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <i class="fas fa-users text-primary"></i>
-                            <?php echo $reservation['party_size']; ?> personas
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-6">
-                            <strong>Estado:</strong>
-                        </div>
-                        <div class="col-sm-6">
-                            <span class="badge bg-success">
-                                <i class="fas fa-check"></i> Confirmada
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <?php if (!empty($reservation['special_requests'])): ?>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <strong>Solicitudes Especiales:</strong>
-                            <div class="mt-2 p-2 bg-light rounded">
-                                <?php echo nl2br(htmlspecialchars($reservation['special_requests'])); ?>
+                    <?php if (isset($reservation) && $reservation): ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Información de la Reservación</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>ID Reservación:</strong></td>
+                                        <td>#<?php echo $reservation['id']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fecha:</strong></td>
+                                        <td><?php echo date('d/m/Y', strtotime($reservation['reservation_date'])); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Hora:</strong></td>
+                                        <td><?php echo date('H:i', strtotime($reservation['reservation_time'])); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Personas:</strong></td>
+                                        <td><?php echo $reservation['party_size']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Estado:</strong></td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <?php echo ucfirst($reservation['status'] ?? 'confirmed'); ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Información del Cliente</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Nombre:</strong></td>
+                                        <td><?php echo htmlspecialchars($reservation['customer_name']); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Teléfono:</strong></td>
+                                        <td><?php echo htmlspecialchars($reservation['customer_phone']); ?></td>
+                                    </tr>
+                                    <?php if (!empty($reservation['customer_email'])): ?>
+                                        <tr>
+                                            <td><strong>Email:</strong></td>
+                                            <td><?php echo htmlspecialchars($reservation['customer_email']); ?></td>
+                                        </tr>
+                                    <?php endif; ?>
+                                    <?php if (!empty($reservation['special_requests'])): ?>
+                                        <tr>
+                                            <td><strong>Solicitudes:</strong></td>
+                                            <td><?php echo htmlspecialchars($reservation['special_requests']); ?></td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </table>
                             </div>
                         </div>
-                    </div>
+                    <?php else: ?>
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                            <h5>Reservación no encontrada</h5>
+                            <p class="text-muted">No se pudo cargar la información de la reservación.</p>
+                        </div>
                     <?php endif; ?>
                 </div>
-                
-                <div class="card-footer bg-light">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <p class="text-muted mb-2">
-                                <i class="fas fa-info-circle"></i>
-                                Por favor llegue 15 minutos antes de su hora reservada
-                            </p>
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                <a href="<?php echo BASE_URL; ?>" class="btn btn-primary">
-                                    <i class="fas fa-home"></i> Volver al Inicio
-                                </a>
-                                <button class="btn btn-outline-secondary" onclick="window.print()">
-                                    <i class="fas fa-print"></i> Imprimir
-                                </button>
-                            </div>
+            </div>
+        </div>
+        
+        <!-- Restaurant Info Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-store"></i> Información del Restaurante
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <?php if (isset($restaurant) && $restaurant): ?>
+                        <div class="text-center mb-3">
+                            <img src="<?php 
+                                if (!empty($restaurant['logo_url'])) {
+                                    if (strpos($restaurant['logo_url'], 'http') === 0) {
+                                        echo htmlspecialchars($restaurant['logo_url']);
+                                    } else {
+                                        echo BASE_URL . 'uploads/restaurants/' . htmlspecialchars($restaurant['logo_url']);
+                                    }
+                                } else {
+                                    echo BASE_URL . 'public/images/restaurant-placeholder.svg';
+                                }
+                            ?>" 
+                                 class="img-fluid rounded" 
+                                 alt="<?php echo htmlspecialchars($restaurant['name']); ?>"
+                                 style="object-fit: cover; max-height: 120px;"
+                                 onerror="this.src='<?php echo BASE_URL; ?>public/images/restaurant-placeholder.svg'">
                         </div>
+                        
+                        <h5 class="text-center"><?php echo htmlspecialchars($restaurant['name']); ?></h5>
+                        
+                        <?php if (!empty($restaurant['description'])): ?>
+                            <p class="text-muted text-center mb-3">
+                                <?php echo htmlspecialchars($restaurant['description']); ?>
+                            </p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($restaurant['address'])): ?>
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                                <small><?php echo htmlspecialchars($restaurant['address']); ?></small>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($restaurant['phone'])): ?>
+                            <div class="mb-2">
+                                <i class="fas fa-phone text-primary"></i>
+                                <small><?php echo htmlspecialchars($restaurant['phone']); ?></small>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($restaurant['opening_time'] && $restaurant['closing_time']): ?>
+                            <div class="mb-2">
+                                <i class="fas fa-clock text-primary"></i>
+                                <small>
+                                    <?php echo date('H:i', strtotime($restaurant['opening_time'])); ?> - 
+                                    <?php echo date('H:i', strtotime($restaurant['closing_time'])); ?>
+                                </small>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="<?php echo BASE_URL; ?>" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Volver al Inicio
+                        </a>
+                        
+                        <?php if (isset($restaurant) && $restaurant): ?>
+                            <a href="<?php echo BASE_URL; ?>restaurant/<?php echo $restaurant['id']; ?>" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-store"></i> Ver Restaurante
+                            </a>
+                            
+                            <a href="<?php echo BASE_URL; ?>restaurant/<?php echo $restaurant['id']; ?>/reserve" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-plus"></i> Nueva Reservación
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Additional Info -->
+<!-- Additional Info -->
     <div class="row justify-content-center mt-4">
         <div class="col-lg-8 col-xl-6">
             <div class="alert alert-info">

@@ -69,6 +69,7 @@ $router->post('hostess/billing/(\d+)', 'HostessController@processBilling');
 $router->get('restaurant/(\d+)', 'ReservationController@restaurant');
 $router->get('restaurant/(\d+)/reserve', 'ReservationController@reserve');
 $router->post('restaurant/(\d+)/reserve', 'ReservationController@processReservation');
+$router->get('reservation/confirmation/(\d+)', 'ReservationController@confirmation');
 
 // Marketing routes
 $router->get('marketing', 'MarketingController@dashboard');
