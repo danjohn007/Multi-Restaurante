@@ -249,5 +249,33 @@ class SuperadminController extends Controller {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
+    public function updateKeywords($id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Método no permitido']);
+            return;
+        }
+        
+        $restaurantModel = $this->loadModel('Restaurant');
+        
+        try {
+            $keywords = isset($_POST['keywords']) ? trim($_POST['keywords']) : '';
+            
+            $restaurantData = [
+                'keywords' => $keywords
+            ];
+            
+            $result = $restaurantModel->update($id, $restaurantData);
+            
+            if ($result) {
+                $this->jsonResponse(['success' => true, 'message' => 'Keywords actualizadas exitosamente']);
+            } else {
+                $this->jsonResponse(['success' => false, 'message' => 'No se pudo actualizar las keywords']);
+            }
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'Error al actualizar keywords: ' . $e->getMessage()]);
+        }
+    }
 }
 ?>

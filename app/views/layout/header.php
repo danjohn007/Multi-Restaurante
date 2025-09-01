@@ -82,6 +82,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content"><?php
+    <main class="main-content">
+    <?php
         // Content will be loaded here by individual views
     ?>

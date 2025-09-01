@@ -36,6 +36,7 @@ $router->get('superadmin/restaurants/create', 'SuperadminController@createRestau
 $router->post('superadmin/restaurants/create', 'SuperadminController@storeRestaurant');
 $router->get('superadmin/restaurants/(\d+)/edit', 'SuperadminController@editRestaurant');
 $router->post('superadmin/restaurants/(\d+)/edit', 'SuperadminController@updateRestaurant');
+$router->post('superadmin/restaurants/(\d+)/keywords', 'SuperadminController@updateKeywords');
 
 // Restaurant admin routes
 $router->get('admin', 'AdminController@dashboard');
