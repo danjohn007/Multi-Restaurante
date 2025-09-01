@@ -130,18 +130,24 @@
                             </select>
                         </div>
                         
-                        <div class="col-md-3">
-                            <label for="filterStatus" class="form-label">Filtrar por Estado</label>
-                            <select class="form-select" id="filterStatus">
-                                <option value="">Todos los estados</option>
-                                <option value="1">Activo</option>
-                                <option value="0">Inactivo</option>
+                        <div class="col-md-4">
+                            <label for="filterRestaurant" class="form-label">Filtrar por Restaurante</label>
+                            <select class="form-select" id="filterRestaurant">
+                                <option value="">Todos los restaurantes</option>
+                                <?php 
+                                $restaurants = $restaurants ?? [];
+                                foreach ($restaurants as $restaurant): 
+                                ?>
+                                    <option value="<?php echo $restaurant['id']; ?>">
+                                        <?php echo htmlspecialchars($restaurant['name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         
-                        <div class="col-md-2">
-                            <button class="btn btn-outline-secondary w-100" id="clearFilters">
-                                <i class="fas fa-times"></i> Limpiar
+                        <div class="col-md-1">
+                            <button class="btn btn-outline-secondary w-100" id="clearFilters" style="margin-top: 32px;">
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
@@ -542,18 +548,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Search and filters
     const searchInput = document.getElementById('searchUsers');
     const roleFilter = document.getElementById('filterRole');
-    const statusFilter = document.getElementById('filterStatus');
+    const restaurantFilter = document.getElementById('filterRestaurant');
     
     function filterUsers() {
         const searchTerm = searchInput.value.toLowerCase();
         const roleValue = roleFilter.value;
-        const statusValue = statusFilter.value;
+        const restaurantValue = restaurantFilter.value;
         const rows = document.querySelectorAll('#usersTable tbody tr');
         
         rows.forEach(row => {
             const text = row.textContent.toLowerCase();
             const role = row.querySelector('.badge').textContent.toLowerCase().trim();
-            const status = row.querySelector('.badge:last-of-type').textContent.toLowerCase().includes('activo');
+            const restaurantCell = row.cells[2]; // Restaurant column
+            const restaurantText = restaurantCell.textContent.toLowerCase().trim();
             
             let showRow = true;
             
@@ -565,8 +572,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 showRow = false;
             }
             
-            if (statusValue && ((statusValue === '1' && !status) || (statusValue === '0' && status))) {
-                showRow = false;
+            if (restaurantValue) {
+                // Check if the restaurant name/ID matches
+                const hasRestaurant = restaurantText.includes(restaurantValue) || 
+                                    restaurantCell.innerHTML.includes(`value="${restaurantValue}"`);
+                if (!hasRestaurant && restaurantText !== '—') {
+                    showRow = false;
+                }
             }
             
             row.style.display = showRow ? '' : 'none';
@@ -575,13 +587,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     searchInput.addEventListener('keyup', filterUsers);
     roleFilter.addEventListener('change', filterUsers);
-    statusFilter.addEventListener('change', filterUsers);
+    restaurantFilter.addEventListener('change', filterUsers);
     
     // Clear filters
     document.getElementById('clearFilters').addEventListener('click', function() {
         searchInput.value = '';
         roleFilter.value = '';
-        statusFilter.value = '';
+        restaurantFilter.value = '';
         filterUsers();
     });
     

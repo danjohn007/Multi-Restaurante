@@ -131,7 +131,8 @@ class ReservationController extends Controller {
                 }
             }
             
-            // Check table availability
+            // Check table availability and get selected table
+            $selectedTableId = $_POST['selected_table_id'] ?? null;
             $availableTables = $tableModel->getAvailable(
                 $id,
                 $_POST['reservation_date'],
@@ -143,11 +144,24 @@ class ReservationController extends Controller {
                 throw new Exception('No hay mesas disponibles para el horario seleccionado');
             }
             
-            // Select best table (smallest that fits the party size)
-            $selectedTable = $availableTables[0];
-            foreach ($availableTables as $table) {
-                if ($table['capacity'] >= $_POST['party_size'] && $table['capacity'] < $selectedTable['capacity']) {
-                    $selectedTable = $table;
+            // Verify selected table is available
+            $selectedTable = null;
+            if ($selectedTableId) {
+                foreach ($availableTables as $table) {
+                    if ($table['id'] == $selectedTableId) {
+                        $selectedTable = $table;
+                        break;
+                    }
+                }
+            }
+            
+            // If no specific table selected or invalid selection, use best available table
+            if (!$selectedTable) {
+                $selectedTable = $availableTables[0];
+                foreach ($availableTables as $table) {
+                    if ($table['capacity'] >= $_POST['party_size'] && $table['capacity'] < $selectedTable['capacity']) {
+                        $selectedTable = $table;
+                    }
                 }
             }
             

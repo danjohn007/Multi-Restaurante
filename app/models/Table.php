@@ -64,6 +64,29 @@ class Table extends Model {
         return $stmt->fetchAll();
     }
     
+    public function getTablesWithStatus($restaurantId) {
+        $stmt = $this->db->prepare("
+            SELECT 
+                t.*,
+                CASE 
+                    WHEN r.id IS NOT NULL AND r.status IN ('confirmed', 'seated') THEN 'occupied'
+                    ELSE 'available'
+                END as status,
+                r.customer_name,
+                r.reservation_time,
+                r.party_size
+            FROM tables t
+            LEFT JOIN reservations r ON FIND_IN_SET(t.id, r.table_ids) > 0
+                AND r.reservation_date = CURDATE()
+                AND r.status IN ('confirmed', 'seated')
+                AND ABS(TIME_TO_SEC(r.reservation_time) - TIME_TO_SEC(CURTIME())) < 7200
+            WHERE t.restaurant_id = ? AND t.is_active = 1
+            ORDER BY t.table_number
+        ");
+        $stmt->execute([$restaurantId]);
+        return $stmt->fetchAll();
+    }
+    
     public function isTableNumberExists($restaurantId, $tableNumber, $excludeId = null) {
         $sql = "SELECT id FROM tables WHERE restaurant_id = ? AND table_number = ?";
         $params = [$restaurantId, $tableNumber];
