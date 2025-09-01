@@ -33,6 +33,8 @@ $router->get('auth/unauthorized', 'AuthController@unauthorized');
 $router->get('superadmin', 'SuperadminController@dashboard');
 $router->get('superadmin/restaurants', 'SuperadminController@restaurants');
 $router->get('superadmin/metrics', 'SuperadminController@globalMetrics');
+$router->get('superadmin/users', 'SuperadminController@users');
+$router->get('superadmin/settings', 'SuperadminController@settings');
 $router->get('superadmin/restaurants/create', 'SuperadminController@createRestaurant');
 $router->post('superadmin/restaurants/create', 'SuperadminController@storeRestaurant');
 $router->get('superadmin/restaurants/(\d+)/edit', 'SuperadminController@editRestaurant');
