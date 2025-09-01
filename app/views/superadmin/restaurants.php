@@ -13,6 +13,9 @@
                     </p>
                 </div>
                 <div>
+                    <a href="<?php echo BASE_URL; ?>superadmin/restaurants/inactive" class="btn btn-outline-warning me-2">
+                        <i class="fas fa-store-slash"></i> Ver Inactivos
+                    </a>
                     <a href="<?php echo BASE_URL; ?>superadmin/restaurants/create" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Nuevo Restaurante
                     </a>

@@ -36,6 +36,75 @@
         </div>
     <?php endif; ?>
 
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter"></i> Filtros de Análisis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="metricsFiltersForm" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="date_from" class="form-label">Fecha Desde</label>
+                            <input type="date" class="form-control" id="date_from" name="date_from" 
+                                   value="<?php echo date('Y-m-01'); ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date_to" class="form-label">Fecha Hasta</label>
+                            <input type="date" class="form-control" id="date_to" name="date_to" 
+                                   value="<?php echo date('Y-m-d'); ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="food_type_filter" class="form-label">Tipo de Cocina</label>
+                            <select class="form-select" id="food_type_filter" name="food_type">
+                                <option value="">Todos los tipos</option>
+                                <option value="Italiana">Italiana</option>
+                                <option value="Mexicana">Mexicana</option>
+                                <option value="Japonesa">Japonesa</option>
+                                <option value="China">China</option>
+                                <option value="Americana">Americana</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Mediterránea">Mediterránea</option>
+                                <option value="Internacional">Internacional</option>
+                                <option value="Mariscos">Mariscos</option>
+                                <option value="Vegetariana">Vegetariana</option>
+                                <option value="Steakhouse">Steakhouse</option>
+                                <option value="Café">Café</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="restaurant_filter" class="form-label">Restaurante</label>
+                            <select class="form-select" id="restaurant_filter" name="restaurant_id">
+                                <option value="">Todos los restaurantes</option>
+                                <?php if (!empty($metrics['all_restaurants'])): ?>
+                                    <?php foreach ($metrics['all_restaurants'] as $restaurant): ?>
+                                        <option value="<?php echo $restaurant['id']; ?>">
+                                            <?php echo htmlspecialchars($restaurant['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-9">
+                            <label for="keyword_filter" class="form-label">Palabra Clave</label>
+                            <input type="text" class="form-control" id="keyword_filter" name="keyword" 
+                                   placeholder="Buscar por palabra clave en nombre o descripción...">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Key Metrics Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
@@ -106,6 +175,53 @@
                             <i class="fas fa-chart-bar text-primary"></i>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <!-- Sales by Date Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line"></i> Ventas por Fecha
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="salesByDateChart" width="400" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales by Cuisine Type Chart -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie"></i> Ventas por Tipo de Cocina
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="salesByCuisineChart" width="300" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Active Restaurants Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Restaurantes Más Activos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="mostActiveRestaurantsChart" width="400" height="120"></canvas>
                 </div>
             </div>
         </div>
@@ -227,3 +343,184 @@
         </div>
     </div>
 </div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize charts
+    initializeCharts();
+    
+    // Handle filters form
+    document.getElementById('metricsFiltersForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        applyFilters();
+    });
+});
+
+function initializeCharts() {
+    // Sample data - in a real application, this would come from the server
+    const salesByDateData = {
+        labels: <?php echo json_encode(array_column($metrics['monthly_stats'] ?? [], 'month')); ?>,
+        datasets: [{
+            label: 'Ventas ($)',
+            data: <?php echo json_encode(array_column($metrics['monthly_stats'] ?? [], 'revenue')); ?>,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.1
+        }]
+    };
+
+    const salesByCuisineData = {
+        labels: <?php echo json_encode(array_column($metrics['sales_by_cuisine'] ?? [], 'food_type')); ?>,
+        datasets: [{
+            data: <?php echo json_encode(array_column($metrics['sales_by_cuisine'] ?? [], 'revenue')); ?>,
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF',
+                '#FF9F40',
+                '#FF6384',
+                '#C9CBCF'
+            ]
+        }]
+    };
+
+    const mostActiveRestaurantsData = {
+        labels: <?php echo json_encode(array_column($metrics['top_restaurants'] ?? [], 'name')); ?>,
+        datasets: [{
+            label: 'Reservaciones',
+            data: <?php echo json_encode(array_column($metrics['top_restaurants'] ?? [], 'reservations')); ?>,
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    // Sales by Date Chart
+    const salesByDateCtx = document.getElementById('salesByDateChart').getContext('2d');
+    new Chart(salesByDateCtx, {
+        type: 'line',
+        data: salesByDateData,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Tendencia de Ventas por Mes'
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Sales by Cuisine Chart
+    const salesByCuisineCtx = document.getElementById('salesByCuisineChart').getContext('2d');
+    new Chart(salesByCuisineCtx, {
+        type: 'doughnut',
+        data: salesByCuisineData,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Distribución por Tipo de Cocina'
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Most Active Restaurants Chart
+    const mostActiveCtx = document.getElementById('mostActiveRestaurantsChart').getContext('2d');
+    new Chart(mostActiveCtx, {
+        type: 'bar',
+        data: mostActiveRestaurantsData,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Restaurantes por Número de Reservaciones'
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function applyFilters() {
+    const formData = new FormData(document.getElementById('metricsFiltersForm'));
+    const params = new URLSearchParams();
+    
+    for (let [key, value] of formData.entries()) {
+        if (value) {
+            params.append(key, value);
+        }
+    }
+    
+    // Add ajax parameter
+    params.append('ajax', '1');
+    
+    // Show loading state
+    App.showAlert('info', 'Aplicando filtros...');
+    
+    // Fetch filtered data
+    fetch('<?php echo BASE_URL; ?>superadmin/metrics?' + params.toString())
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateChartsWithData(data.metrics);
+                App.showAlert('success', 'Filtros aplicados exitosamente');
+            } else {
+                App.showAlert('danger', 'Error al aplicar filtros: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            App.showAlert('danger', 'Error de conexión al aplicar filtros');
+        });
+}
+
+function updateChartsWithData(metrics) {
+    // This function would update the charts with new filtered data
+    // For now, it will just reload the page with the new parameters
+    const formData = new FormData(document.getElementById('metricsFiltersForm'));
+    const params = new URLSearchParams();
+    
+    for (let [key, value] of formData.entries()) {
+        if (value) {
+            params.append(key, value);
+        }
+    }
+    
+    window.location.href = '<?php echo BASE_URL; ?>superadmin/metrics?' + params.toString();
+}
+</script>

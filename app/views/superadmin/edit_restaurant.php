@@ -46,7 +46,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?php echo BASE_URL; ?>superadmin/restaurants/<?php echo $restaurant['id']; ?>/edit" id="restaurantForm">
+                    <form method="POST" action="<?php echo BASE_URL; ?>superadmin/restaurants/<?php echo $restaurant['id']; ?>/edit" id="restaurantForm" enctype="multipart/form-data">
                         <div class="row">
                             <!-- Basic Information -->
                             <div class="col-md-6">
@@ -92,6 +92,44 @@
                                    placeholder="Ej: restaurante, pizza, comida italiana, Roma Norte"
                                    value="<?php echo htmlspecialchars($restaurant['keywords'] ?? ''); ?>">
                             <div class="form-text">Separe las palabras clave con comas. Ayuda a mejorar la visibilidad en búsquedas.</div>
+                        </div>
+
+                        <!-- Restaurant Image/Logo -->
+                        <hr class="my-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-image"></i> Imagen/Logo del Restaurante
+                        </h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="restaurant_image" class="form-label">Imagen del Restaurante</label>
+                                    <input type="file" class="form-control" id="restaurant_image" name="restaurant_image" 
+                                           accept="image/jpeg,image/jpg,image/png">
+                                    <div class="form-text">Formatos permitidos: JPG, PNG. Tamaño máximo: 2MB</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Imagen Actual</label>
+                                    <div class="current-image-container">
+                                        <?php if (!empty($restaurant['logo_url'])): ?>
+                                            <img src="<?php echo BASE_URL; ?>uploads/restaurants/<?php echo htmlspecialchars($restaurant['logo_url']); ?>" 
+                                                 alt="Logo de <?php echo htmlspecialchars($restaurant['name']); ?>" 
+                                                 class="img-thumbnail d-block" style="max-width: 150px; max-height: 100px;">
+                                            <small class="text-muted d-block mt-1">
+                                                <?php echo htmlspecialchars($restaurant['logo_url']); ?>
+                                            </small>
+                                        <?php else: ?>
+                                            <div class="text-center p-3 border border-dashed rounded">
+                                                <i class="fas fa-image fa-3x text-muted mb-2"></i>
+                                                <p class="text-muted mb-0">Sin imagen</p>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Contact Information -->

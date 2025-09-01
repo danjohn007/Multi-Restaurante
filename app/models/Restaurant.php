@@ -58,6 +58,25 @@ class Restaurant extends Model {
         return $restaurantId ? $stmt->fetch() : $stmt->fetchAll();
     }
     
+    public function getInactiveWithStats() {
+        $stmt = $this->db->prepare("
+            SELECT r.*, 
+                   COUNT(DISTINCT res.id) as total_reservations,
+                   COUNT(DISTINCT CASE WHEN res.status = 'completed' THEN res.id END) as completed_reservations,
+                   COALESCE(SUM(b.total_amount), 0) as total_revenue,
+                   COUNT(DISTINCT t.id) as total_tables
+            FROM restaurants r
+            LEFT JOIN reservations res ON r.id = res.restaurant_id
+            LEFT JOIN bills b ON res.id = b.reservation_id
+            LEFT JOIN tables t ON r.id = t.restaurant_id AND t.is_active = 1
+            WHERE r.is_active = 0
+            GROUP BY r.id
+            ORDER BY r.updated_at DESC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
     public function updateKeywords($restaurantId, $keywords) {
         return $this->update($restaurantId, ['keywords' => $keywords]);
     }
