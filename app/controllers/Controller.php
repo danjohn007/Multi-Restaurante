@@ -46,7 +46,9 @@ class Controller {
     }
     
     protected function requireAuth($role = null) {
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
         if (!isset($_SESSION['user_id'])) {
             $this->redirect('auth/login');
         }
@@ -59,7 +61,9 @@ class Controller {
     }
     
     protected function isLoggedIn() {
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
         return isset($_SESSION['user_id']);
     }
 }
