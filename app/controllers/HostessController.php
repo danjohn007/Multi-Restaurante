@@ -255,8 +255,6 @@ class HostessController extends Controller {
         }
     }
     
-    private function getUserRestaurantId() {
-        return $_SESSION['user']['restaurant_id'] ?? null;
-    }
+
 }
 ?>
