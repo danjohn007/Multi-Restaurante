@@ -21,6 +21,8 @@ class Table extends Model {
     }
     
     public function getAvailable($restaurantId, $date, $time, $partySize) {
+        // Fixed MySQL-compatible query to avoid SQLSTATE[42000] syntax errors
+        // Simplified approach using FIND_IN_SET which is more reliable than complex SUBSTRING_INDEX
         $stmt = $this->db->prepare("
             SELECT t.* FROM tables t
             WHERE t.restaurant_id = ? 
@@ -29,19 +31,17 @@ class Table extends Model {
             AND (t.valid_from IS NULL OR t.valid_from <= ?)
             AND (t.valid_until IS NULL OR t.valid_until >= ?)
             AND t.id NOT IN (
-                SELECT DISTINCT CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(table_ids, ',', numbers.n), ',', -1) AS UNSIGNED) as table_id
-                FROM reservations
-                CROSS JOIN (
-                    SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-                ) numbers
-                WHERE CHAR_LENGTH(table_ids) - CHAR_LENGTH(REPLACE(table_ids, ',', '')) >= numbers.n - 1
-                AND reservation_date = ?
-                AND ABS(TIME_TO_SEC(reservation_time) - TIME_TO_SEC(?)) < 7200
-                AND status IN ('confirmed', 'seated')
+                SELECT DISTINCT t_res.id 
+                FROM tables t_res
+                INNER JOIN reservations r ON FIND_IN_SET(t_res.id, r.table_ids) > 0
+                WHERE r.restaurant_id = ?
+                AND r.reservation_date = ?
+                AND ABS(TIME_TO_SEC(r.reservation_time) - TIME_TO_SEC(?)) < 7200
+                AND r.status IN ('confirmed', 'seated')
             )
             ORDER BY t.capacity ASC, t.table_number ASC
         ");
-        $stmt->execute([$restaurantId, $partySize, $date, $date, $date, $time]);
+        $stmt->execute([$restaurantId, $partySize, $date, $date, $restaurantId, $date, $time]);
         return $stmt->fetchAll();
     }
     
