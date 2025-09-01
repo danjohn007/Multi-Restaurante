@@ -12,8 +12,8 @@ define('DB_PASS', 'Danjohn007!');
 // Auto-detect base URL
 function getBaseUrl() {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-    $host = $_SERVER['HTTP_HOST'];
-    $script = $_SERVER['SCRIPT_NAME'];
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8000';
+    $script = $_SERVER['SCRIPT_NAME'] ?? '/index.php';
     $path = str_replace(basename($script), '', $script);
     return $protocol . $host . $path;
 }

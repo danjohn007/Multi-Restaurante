@@ -75,6 +75,15 @@ $router->get('marketing', 'MarketingController@dashboard');
 $router->get('marketing/segments', 'MarketingController@segments');
 $router->get('marketing/campaigns', 'MarketingController@campaigns');
 
+// User management routes
+$router->get('usuario/manage', 'UserController@manage');
+$router->post('usuario/create', 'UserController@create');
+$router->post('usuario/update', 'UserController@update');
+$router->post('usuario/delete', 'UserController@delete');
+$router->post('usuario/toggle-status', 'UserController@toggleStatus');
+$router->post('usuario/reset-password', 'UserController@resetPassword');
+$router->get('usuario/get/(\d+)', 'UserController@getUser');
+
 // API routes
 $router->get('api/restaurants/search', 'ApiController@searchRestaurants');
 $router->get('api/restaurants/(\d+)/availability', 'ApiController@checkAvailability');
