@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Demo - Multi-Restaurante</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .stat-card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-crown"></i> Multi-Restaurante - Superadmin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="badge bg-light text-primary px-3 py-2">
+                    <i class="fas fa-crown"></i> Demo Dashboard
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0">
+                            <i class="fas fa-tachometer-alt text-primary"></i> 
+                            Panel Superadministrador
+                        </h1>
+                        <p class="text-muted mb-0">
+                            Gestión global del sistema Multi-Restaurante
+                        </p>
+                    </div>
+                    <div>
+                        <span class="badge bg-primary px-3 py-2">
+                            <i class="fas fa-crown"></i> Superadmin
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stat-number text-primary">12</div>
+                                <div class="stat-label">Restaurantes Activos</div>
+                            </div>
+                            <div class="text-primary">
+                                <i class="fas fa-store fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stat-number text-success">8</div>
+                                <div class="stat-label">Administradores</div>
+                            </div>
+                            <div class="text-success">
+                                <i class="fas fa-user-tie fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stat-number text-info">24</div>
+                                <div class="stat-label">Hostess</div>
+                            </div>
+                            <div class="text-info">
+                                <i class="fas fa-users fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stat-number text-warning">356</div>
+                                <div class="stat-label">Total Reservaciones</div>
+                            </div>
+                            <div class="text-warning">
+                                <i class="fas fa-calendar-alt fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Row -->
+        <div class="row">
+            <!-- Restaurants Management -->
+            <div class="col-xl-8 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-store"></i> Restaurantes
+                        </h5>
+                        <a href="#" class="btn btn-sm btn-primary">
+                            <i class="fas fa-cog"></i> Gestionar
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurante</th>
+                                        <th>Tipo</th>
+                                        <th>Reservaciones</th>
+                                        <th>Ingresos</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary rounded me-2" style="width: 40px; height: 40px;"></div>
+                                                <div>
+                                                    <div class="fw-bold">La Parrilla Dorada</div>
+                                                    <small class="text-muted">parrilla@example.com</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-secondary">Parrilla</span></td>
+                                        <td><span class="fw-bold">45</span></td>
+                                        <td><span class="fw-bold text-success">$12,500</span></td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-success rounded me-2" style="width: 40px; height: 40px;"></div>
+                                                <div>
+                                                    <div class="fw-bold">Sushi Zen</div>
+                                                    <small class="text-muted">sushi@example.com</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-secondary">Japonesa</span></td>
+                                        <td><span class="fw-bold">38</span></td>
+                                        <td><span class="fw-bold text-success">$18,200</span></td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-warning rounded me-2" style="width: 40px; height: 40px;"></div>
+                                                <div>
+                                                    <div class="fw-bold">Italiano Delizioso</div>
+                                                    <small class="text-muted">italiano@example.com</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-secondary">Italiana</span></td>
+                                        <td><span class="fw-bold">52</span></td>
+                                        <td><span class="fw-bold text-success">$15,800</span></td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restaurant Activity Bar Chart -->
+            <div class="col-xl-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar text-primary"></i> Actividad de Restaurantes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="activityChart" width="300" height="150"></canvas>
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">Reservaciones por restaurante</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Heatmap -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-fire text-danger"></i> Mapa de Calor - Reservaciones por Horario
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="reservationHeatmap" style="height: 300px;"></div>
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">Patrones de reservaciones por día y hora</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Cambios Implementados</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-times text-danger"></i> Eliminado:</h6>
+                            <ul>
+                                <li>Gráfica de Distribución de Cocinas (chart pie/doughnut)</li>
+                                <li>Código JavaScript de initializeCuisineChart()</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-plus text-success"></i> Agregado:</h6>
+                            <ul>
+                                <li>Gráfica de barras de Actividad de Restaurantes</li>
+                                <li>Mapa de calor de patrones de reservaciones</li>
+                                <li>Implementación sin bucles infinitos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dashboard charts
+        initializeActivityChart();
+        initializeReservationHeatmap();
+    });
+
+    function initializeActivityChart() {
+        // Sample restaurant activity data
+        const activityData = {
+            labels: ['La Parrilla', 'Sushi Zen', 'Italiano D.', 'Taco Loco', 'Burger King'],
+            datasets: [{
+                label: 'Reservaciones',
+                data: [45, 38, 52, 28, 35],
+                backgroundColor: [
+                    '#007bff',
+                    '#28a745', 
+                    '#ffc107',
+                    '#dc3545',
+                    '#6f42c1'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const ctx = document.getElementById('activityChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: activityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function initializeReservationHeatmap() {
+        // Create a simple heatmap using HTML/CSS grid
+        const heatmapContainer = document.getElementById('reservationHeatmap');
+        if (!heatmapContainer) return;
+        
+        // Days of the week
+        const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        // Hours from 11 AM to 10 PM
+        const hours = [];
+        for (let i = 11; i <= 22; i++) {
+            hours.push(i + ':00');
+        }
+        
+        // Generate sample heatmap data (0-10 intensity)
+        const heatmapData = [];
+        for (let day = 0; day < 7; day++) {
+            for (let hour = 0; hour < hours.length; hour++) {
+                // Simulate higher activity during evening hours and weekends
+                let intensity = Math.random() * 10;
+                if (day >= 5) intensity *= 1.5; // Weekend multiplier
+                if (hour >= 6 && hour <= 9) intensity *= 1.3; // Evening multiplier
+                intensity = Math.min(10, Math.round(intensity));
+                
+                heatmapData.push({
+                    day: day,
+                    hour: hour,
+                    value: intensity,
+                    dayName: days[day],
+                    hourName: hours[hour]
+                });
+            }
+        }
+        
+        // Create heatmap HTML
+        let heatmapHTML = '<div style="display: grid; grid-template-columns: 50px repeat(' + hours.length + ', 1fr); gap: 2px; font-size: 12px;">';
+        
+        // Header row (empty cell + hours)
+        heatmapHTML += '<div></div>';
+        hours.forEach(hour => {
+            heatmapHTML += '<div style="text-align: center; padding: 5px; font-weight: bold;">' + hour + '</div>';
+        });
+        
+        // Data rows
+        days.forEach((day, dayIndex) => {
+            // Day label
+            heatmapHTML += '<div style="text-align: center; padding: 5px; font-weight: bold; display: flex; align-items: center; justify-content: center;">' + day + '</div>';
+            
+            // Hour cells for this day
+            hours.forEach((hour, hourIndex) => {
+                const dataPoint = heatmapData.find(d => d.day === dayIndex && d.hour === hourIndex);
+                const intensity = dataPoint ? dataPoint.value : 0;
+                const opacity = Math.max(0.1, intensity / 10);
+                const backgroundColor = `rgba(220, 53, 69, ${opacity})`; // Red with varying opacity
+                
+                heatmapHTML += `<div style="
+                    background-color: ${backgroundColor}; 
+                    padding: 8px; 
+                    border-radius: 3px; 
+                    text-align: center; 
+                    color: ${intensity > 5 ? 'white' : 'black'};
+                    font-size: 10px;
+                    min-height: 25px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    border: 1px solid rgba(0,0,0,0.1);
+                " title="${day} ${hour}: ${intensity} reservaciones">${intensity}</div>`;
+            });
+        });
+        
+        heatmapHTML += '</div>';
+        
+        // Add legend
+        heatmapHTML += '<div style="margin-top: 15px; text-align: center;">';
+        heatmapHTML += '<div style="display: inline-flex; align-items: center; gap: 10px;">';
+        heatmapHTML += '<span style="font-size: 12px;">Menos actividad</span>';
+        for (let i = 1; i <= 10; i++) {
+            const opacity = i / 10;
+            heatmapHTML += `<div style="width: 15px; height: 15px; background-color: rgba(220, 53, 69, ${opacity}); border: 1px solid rgba(0,0,0,0.2);"></div>`;
+        }
+        heatmapHTML += '<span style="font-size: 12px;">Más actividad</span>';
+        heatmapHTML += '</div>';
+        heatmapHTML += '</div>';
+        
+        heatmapContainer.innerHTML = heatmapHTML;
+    }
+    </script>
+</body>
+</html>

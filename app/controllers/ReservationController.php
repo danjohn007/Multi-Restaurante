@@ -211,9 +211,14 @@ class ReservationController extends Controller {
             return;
         }
         
+        // Load restaurant details
+        $restaurantModel = $this->loadModel('Restaurant');
+        $restaurant = $restaurantModel->find($reservation['restaurant_id']);
+        
         $data = [
             'title' => 'Confirmación de Reservación',
-            'reservation' => $reservation
+            'reservation' => $reservation,
+            'restaurant' => $restaurant
         ];
         
         $this->loadView('layout/header', $data);
