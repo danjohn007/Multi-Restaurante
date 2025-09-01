@@ -114,6 +114,65 @@ const App = {
         });
     },
     
+    // Submit form via AJAX with custom FormData
+    submitFormAjaxWithData: function(form, formData) {
+        const action = form.action || window.location.href;
+        const method = form.method || 'POST';
+        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+        
+        // Store original button text
+        const originalText = submitBtn ? submitBtn.innerHTML || submitBtn.value : '';
+        
+        // Show loading state
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            if (submitBtn.innerHTML !== undefined) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            } else {
+                submitBtn.value = 'Procesando...';
+            }
+        }
+        
+        fetch(action, {
+            method: method,
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.showAlert('success', data.message || 'Operación completada exitosamente');
+                
+                // Handle redirect
+                if (data.redirect) {
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1500);
+                } else if (data.reload) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                }
+            } else {
+                this.showAlert('danger', data.message || 'Error en la operación');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.showAlert('danger', 'Error de conexión');
+        })
+        .finally(() => {
+            // Restore button state
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                if (submitBtn.innerHTML !== undefined) {
+                    submitBtn.innerHTML = originalText;
+                } else {
+                    submitBtn.value = originalText;
+                }
+            }
+        });
+    },
+    
     // Load content via AJAX
     loadContentAjax: function(url, target) {
         const targetElement = document.querySelector(target);

@@ -15,10 +15,25 @@ class UserController extends Controller {
         $users = $userModel->findAllWithRestaurants();
         $restaurants = $restaurantModel->getActive();
         
+        // Calculate statistics
+        $stats = [
+            'total_users' => count($users),
+            'active_users' => count(array_filter($users, function($user) {
+                return $user['is_active'] == 1;
+            })),
+            'admins_count' => count(array_filter($users, function($user) {
+                return $user['role'] === 'admin';
+            })),
+            'hostess_count' => count(array_filter($users, function($user) {
+                return $user['role'] === 'hostess';
+            }))
+        ];
+        
         $data = [
             'title' => 'Gestión de Usuarios',
             'users' => $users,
-            'restaurants' => $restaurants
+            'restaurants' => $restaurants,
+            'stats' => $stats
         ];
         
         $this->loadView('layout/header', $data);

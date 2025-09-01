@@ -155,10 +155,13 @@
                         <div class="row mb-4" id="tableAvailabilitySection" style="display: none;">
                             <div class="col-12">
                                 <h6 class="text-success mb-3">
-                                    <i class="fas fa-check-circle"></i> Mesa Preseleccionada
+                                    <i class="fas fa-check-circle"></i> Mesas Disponibles
                                 </h6>
-                                <div id="selectedTableInfo" class="alert alert-success">
-                                    <!-- Table info will be displayed here -->
+                                <div id="availableTablesContainer">
+                                    <!-- Available tables will be displayed here -->
+                                </div>
+                                <div id="selectedTableInfo" class="alert alert-info mt-3" style="display: none;">
+                                    <!-- Selected table info will be displayed here -->
                                 </div>
                             </div>
                         </div>
@@ -264,6 +267,7 @@
 
 <script>
 let availableTables = [];
+let selectedTable = null;
 
 function checkAvailabilityBeforeSubmit() {
     const date = document.getElementById('reservation_date').value;
@@ -289,17 +293,15 @@ function checkAvailabilityBeforeSubmit() {
                 availableTables = data.tables;
                 showAvailableTables(data.tables);
                 
-                // Show submit button
-                document.getElementById('submitBtn').style.display = 'inline-block';
-                checkBtn.style.display = 'none';
-                
-                App.showAlert('success', 'Mesa disponible encontrada. Puede proceder con la reservación.', 3000);
+                App.showAlert('success', 'Mesas disponibles encontradas. Seleccione una mesa para continuar.', 3000);
             } else {
-                App.showAlert('warning', 'No hay mesas disponibles para el horario seleccionado. Intente con otra fecha u horario.');
-                
-                // Hide submit button
+                availableTables = [];
+                selectedTable = null;
+                document.getElementById('tableAvailabilitySection').style.display = 'none';
                 document.getElementById('submitBtn').style.display = 'none';
                 checkBtn.style.display = 'inline-block';
+                
+                App.showAlert('warning', 'No hay mesas disponibles para el horario seleccionado. Intente con otra fecha u horario.');
             }
         })
         .catch(error => {
@@ -314,24 +316,109 @@ function checkAvailabilityBeforeSubmit() {
 
 function showAvailableTables(tables) {
     const section = document.getElementById('tableAvailabilitySection');
-    const infoDiv = document.getElementById('selectedTableInfo');
+    const container = document.getElementById('availableTablesContainer');
     
-    // Show the best table (smallest that fits)
-    const bestTable = tables.reduce((best, current) => 
-        current.capacity < best.capacity ? current : best
-    );
+    // Sort tables by capacity (smallest first that fits the party size)
+    const partySize = parseInt(document.getElementById('party_size').value);
+    const suitableTables = tables.filter(table => table.capacity >= partySize)
+                                 .sort((a, b) => a.capacity - b.capacity);
     
-    infoDiv.innerHTML = `
-        <div class="d-flex align-items-center">
-            <i class="fas fa-utensils fa-2x text-success me-3"></i>
-            <div>
-                <strong>Mesa ${bestTable.table_number}</strong> preseleccionada<br>
-                <small class="text-muted">Capacidad: ${bestTable.capacity} personas</small>
+    let tablesHtml = '<div class="row">';
+    
+    suitableTables.forEach((table, index) => {
+        const isRecommended = index === 0; // First table is recommended (smallest suitable)
+        tablesHtml += `
+            <div class="col-md-4 col-sm-6 mb-3">
+                <div class="card table-option ${isRecommended ? 'border-success' : 'border-secondary'}" 
+                     data-table-id="${table.id}" onclick="selectTable(${table.id})">
+                    <div class="card-body text-center">
+                        <div class="table-icon mb-2">
+                            <i class="fas fa-utensils fa-2x ${isRecommended ? 'text-success' : 'text-muted'}"></i>
+                        </div>
+                        <h6 class="card-title">Mesa ${table.table_number}</h6>
+                        <p class="card-text">
+                            <small class="text-muted">Capacidad: ${table.capacity} personas</small>
+                            ${table.location ? `<br><small class="text-muted">${table.location}</small>` : ''}
+                            ${isRecommended ? '<br><span class="badge bg-success">Recomendada</span>' : ''}
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
-    `;
+        `;
+    });
     
+    tablesHtml += '</div>';
+    
+    if (suitableTables.length === 0) {
+        tablesHtml = '<div class="alert alert-warning">No se encontraron mesas adecuadas para el número de personas.</div>';
+    }
+    
+    container.innerHTML = tablesHtml;
     section.style.display = 'block';
+    
+    // Auto-select the recommended table
+    if (suitableTables.length > 0) {
+        selectTable(suitableTables[0].id);
+    }
+}
+
+function selectTable(tableId) {
+    // Remove previous selection
+    document.querySelectorAll('.table-option').forEach(card => {
+        card.classList.remove('border-primary', 'selected');
+        card.style.backgroundColor = '';
+    });
+    
+    // Mark new selection
+    const selectedCard = document.querySelector(`[data-table-id="${tableId}"]`);
+    if (selectedCard) {
+        selectedCard.classList.add('border-primary', 'selected');
+        selectedCard.style.backgroundColor = '#e3f2fd';
+    }
+    
+    // Find selected table data
+    selectedTable = availableTables.find(table => table.id == tableId);
+    
+    if (selectedTable) {
+        // Show selected table info
+        const infoDiv = document.getElementById('selectedTableInfo');
+        infoDiv.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas fa-utensils fa-2x text-primary me-3"></i>
+                <div>
+                    <strong>Mesa ${selectedTable.table_number} seleccionada</strong><br>
+                    <small class="text-muted">
+                        Capacidad: ${selectedTable.capacity} personas
+                        ${selectedTable.location ? ` • ${selectedTable.location}` : ''}
+                    </small>
+                </div>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="changeTableSelection()">
+                        <i class="fas fa-exchange-alt"></i> Cambiar Mesa
+                    </button>
+                </div>
+            </div>
+        `;
+        infoDiv.style.display = 'block';
+        
+        // Show submit button
+        document.getElementById('submitBtn').style.display = 'inline-block';
+        document.querySelector('[onclick="checkAvailabilityBeforeSubmit()"]').style.display = 'none';
+    }
+}
+
+function changeTableSelection() {
+    // Hide selected table info and show table options again
+    document.getElementById('selectedTableInfo').style.display = 'none';
+    document.getElementById('availableTablesContainer').style.display = 'block';
+    document.getElementById('submitBtn').style.display = 'none';
+    
+    // Remove selection
+    selectedTable = null;
+    document.querySelectorAll('.table-option').forEach(card => {
+        card.classList.remove('border-primary', 'selected');
+        card.style.backgroundColor = '';
+    });
 }
 
 // Form validation and submission
@@ -373,14 +460,19 @@ document.getElementById('reservationForm').addEventListener('submit', function(e
         return;
     }
     
-    // Check if tables are available
-    if (availableTables.length === 0) {
-        App.showAlert('warning', 'Debe verificar la disponibilidad antes de confirmar la reservación');
+    // Check if table is selected
+    if (!selectedTable) {
+        App.showAlert('warning', 'Debe seleccionar una mesa antes de confirmar la reservación');
         return;
     }
     
-    // Submit form
-    App.submitFormAjax(this);
+    // Add selected table to form data
+    const formData = new FormData(this);
+    formData.append('selected_table_id', selectedTable.id);
+    formData.append('ajax', '1');
+    
+    // Submit form with selected table
+    App.submitFormAjaxWithData(this, formData);
 });
 
 // Auto-check availability if coming from restaurant page with parameters
@@ -406,8 +498,34 @@ document.getElementById('party_size').addEventListener('change', function() {
 
 function resetAvailability() {
     availableTables = [];
+    selectedTable = null;
     document.getElementById('tableAvailabilitySection').style.display = 'none';
     document.getElementById('submitBtn').style.display = 'none';
     document.querySelector('[onclick="checkAvailabilityBeforeSubmit()"]').style.display = 'inline-block';
 }
 </script>
+
+<style>
+.table-option {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.table-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.table-option.selected {
+    background-color: #e3f2fd !important;
+    border-color: #2196f3 !important;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.table-icon {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>

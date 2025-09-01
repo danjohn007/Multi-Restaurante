@@ -65,6 +65,22 @@ $router->post('hostess/checkin/(\d+)', 'HostessController@processCheckin');
 $router->get('hostess/billing/(\d+)', 'HostessController@billing');
 $router->post('hostess/billing/(\d+)', 'HostessController@processBilling');
 
+// Public hostess routes (for external access)
+$router->get('public/hostess-public/admin', 'AdminController@dashboard');
+$router->get('public/hostess-public/admin/tables', 'AdminController@tables');
+$router->get('public/hostess-public/admin/tables/create', 'AdminController@createTable');
+$router->post('public/hostess-public/admin/tables/create', 'AdminController@storeTable');
+$router->get('public/hostess-public/admin/profile', 'AdminController@profile');
+$router->post('public/hostess-public/admin/profile', 'AdminController@updateProfile');
+$router->get('public/hostess-public/admin/users', 'AdminController@users');
+$router->get('public/hostess-public/admin/reports', 'AdminController@reports');
+
+// Public hostess access routes
+$router->get('public/hostess-public/dashboard', 'HostessController@dashboard');
+$router->get('public/hostess-public/reservations', 'HostessController@reservations');
+$router->get('public/hostess-public/checkin/(\d+)', 'HostessController@checkin');
+$router->post('public/hostess-public/checkin/(\d+)', 'HostessController@processCheckin');
+
 // Public reservation routes
 $router->get('restaurant/(\d+)', 'ReservationController@restaurant');
 $router->get('restaurant/(\d+)/reserve', 'ReservationController@reserve');

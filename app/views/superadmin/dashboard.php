@@ -281,22 +281,7 @@
             </div>
         </div>
 
-        <!-- Restaurant Activity Bar Chart -->
-        <div class="col-xl-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-bar text-primary"></i> Actividad de Restaurantes
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="activityChart" width="300" height="150"></canvas>
-                    <div class="mt-3 text-center">
-                        <small class="text-muted">Reservaciones por restaurante</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Restaurant Activity chart removed as requested -->
 
         <!-- Quick Actions -->
         <div class="col-xl-4 mb-4">
@@ -419,74 +404,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dashboard charts
-    initializeActivityChart();
     initializeReservationHeatmap();
 });
-
-function initializeActivityChart() {
-    // Sample restaurant activity data - in real app this would come from server
-    const activityData = {
-        labels: <?php 
-            // Get restaurant names from stats
-            if (!empty($restaurantStats)) {
-                $names = array_slice(array_map(function($r) { 
-                    return substr($r['name'], 0, 10) . (strlen($r['name']) > 10 ? '...' : ''); 
-                }, $restaurantStats), 0, 6);
-                echo json_encode($names);
-            } else {
-                echo '["Rest. A", "Rest. B", "Rest. C", "Rest. D", "Rest. E"]';
-            }
-        ?>,
-        datasets: [{
-            label: 'Reservaciones',
-            data: <?php 
-                // Get reservation counts from stats
-                if (!empty($restaurantStats)) {
-                    $reservations = array_slice(array_map(function($r) { 
-                        return $r['total_reservations']; 
-                    }, $restaurantStats), 0, 6);
-                    echo json_encode($reservations);
-                } else {
-                    echo '[12, 8, 15, 6, 10]';
-                }
-            ?>,
-            backgroundColor: [
-                '#007bff',
-                '#28a745', 
-                '#ffc107',
-                '#dc3545',
-                '#6f42c1',
-                '#fd7e14'
-            ],
-            borderWidth: 1
-        }]
-    };
-
-    const ctx = document.getElementById('activityChart');
-    if (ctx) {
-        new Chart(ctx, {
-            type: 'bar',
-            data: activityData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-    }
-}
 
 function initializeReservationHeatmap() {
     // Create a simple heatmap using HTML/CSS grid
