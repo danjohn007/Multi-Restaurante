@@ -151,10 +151,23 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="<?php echo $restaurant['logo_url'] ?? BASE_URL . 'public/images/restaurant-placeholder.jpg'; ?>" 
+                                                    <img src="<?php 
+                                                        if (!empty($restaurant['logo_url'])) {
+                                                            // Check if it's already a full URL or relative path
+                                                            if (strpos($restaurant['logo_url'], 'http') === 0) {
+                                                                echo htmlspecialchars($restaurant['logo_url']);
+                                                            } else {
+                                                                echo BASE_URL . 'uploads/restaurants/' . htmlspecialchars($restaurant['logo_url']);
+                                                            }
+                                                        } else {
+                                                            echo BASE_URL . 'public/images/restaurant-placeholder.svg';
+                                                        }
+                                                    ?>" 
                                                          class="rounded me-2" 
                                                          width="40" height="40"
-                                                         alt="<?php echo htmlspecialchars($restaurant['name']); ?>">
+                                                         alt="<?php echo htmlspecialchars($restaurant['name']); ?>"
+                                                         style="object-fit: cover;"
+                                                         onerror="this.src='<?php echo BASE_URL; ?>public/images/restaurant-placeholder.svg'">
                                                     <div>
                                                         <div class="fw-bold"><?php echo htmlspecialchars($restaurant['name']); ?></div>
                                                         <small class="text-muted"><?php echo htmlspecialchars($restaurant['email'] ?? ''); ?></small>
@@ -199,18 +212,35 @@
             </div>
         </div>
 
-        <!-- Mini Analytics Chart -->
+        <!-- Revenue Trends Chart -->
         <div class="col-xl-4 mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="fas fa-chart-area"></i> Resumen Analítico
+                        <i class="fas fa-chart-line text-success"></i> Tendencias de Ingresos
                     </h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="dashboardMiniChart" width="300" height="150"></canvas>
+                    <canvas id="revenueChart" width="300" height="150"></canvas>
                     <div class="mt-3 text-center">
-                        <small class="text-muted">Reservaciones por mes (últimos 6 meses)</small>
+                        <small class="text-muted">Ingresos mensuales (últimos 6 meses)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuisine Distribution Chart -->
+        <div class="col-xl-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie text-warning"></i> Distribución de Cocinas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="cuisineChart" width="300" height="150"></canvas>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">Tipos de cocina por restaurante</small>
                     </div>
                 </div>
             </div>
@@ -317,29 +347,40 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize mini chart for dashboard
-    initializeDashboardChart();
+    // Initialize dashboard charts
+    initializeRevenueChart();
+    initializeCuisineChart();
 });
 
-function initializeDashboardChart() {
-    // Sample data for last 6 months - in real app this would come from server
-    const monthlyData = {
+function initializeRevenueChart() {
+    // Sample revenue data for last 6 months - in real app this would come from server
+    const revenueData = {
         labels: <?php echo json_encode(array_column(array_slice($stats['monthly_stats'] ?? [], 0, 6), 'month')); ?>,
         datasets: [{
-            label: 'Reservaciones',
-            data: <?php echo json_encode(array_column(array_slice($stats['monthly_stats'] ?? [], 0, 6), 'reservations')); ?>,
-            borderColor: 'rgb(54, 162, 235)',
-            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            label: 'Ingresos ($)',
+            data: <?php 
+                // Generate sample revenue data based on reservations
+                $monthlyStats = array_slice($stats['monthly_stats'] ?? [], 0, 6);
+                $revenueData = array_map(function($stat) {
+                    return ($stat['reservations'] ?? 0) * 45; // Average $45 per reservation
+                }, $monthlyStats);
+                echo json_encode($revenueData);
+            ?>,
+            borderColor: 'rgb(40, 167, 69)',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
             tension: 0.4,
-            fill: true
+            fill: true,
+            pointBackgroundColor: 'rgb(40, 167, 69)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
         }]
     };
 
-    const ctx = document.getElementById('dashboardMiniChart');
+    const ctx = document.getElementById('revenueChart');
     if (ctx) {
         new Chart(ctx, {
             type: 'line',
-            data: monthlyData,
+            data: revenueData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -362,16 +403,77 @@ function initializeDashboardChart() {
                             color: 'rgba(0,0,0,0.1)'
                         },
                         ticks: {
-                            stepSize: 1
+                            callback: function(value) {
+                                return '$' + value;
+                            }
                         }
                     }
                 },
                 elements: {
                     point: {
-                        radius: 3,
-                        hoverRadius: 6
+                        radius: 4,
+                        hoverRadius: 8
                     }
                 }
+            }
+        });
+    }
+}
+
+function initializeCuisineChart() {
+    // Sample cuisine distribution data - in real app this would come from server
+    const cuisineData = {
+        labels: ['Italiana', 'Mexicana', 'Asiática', 'Americana', 'Mediterránea', 'Otros'],
+        datasets: [{
+            data: [
+                <?php 
+                // Generate sample cuisine distribution data
+                $totalRestaurants = $stats['total_restaurants'] ?? 10;
+                $distribution = [
+                    round($totalRestaurants * 0.25), // Italian
+                    round($totalRestaurants * 0.20), // Mexican  
+                    round($totalRestaurants * 0.15), // Asian
+                    round($totalRestaurants * 0.15), // American
+                    round($totalRestaurants * 0.10), // Mediterranean
+                    round($totalRestaurants * 0.15)  // Others
+                ];
+                echo implode(', ', $distribution);
+                ?>
+            ],
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB', 
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF',
+                '#FF9F40'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    };
+
+    const ctx = document.getElementById('cuisineChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: cuisineData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 10,
+                            usePointStyle: true,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
             }
         });
     }
