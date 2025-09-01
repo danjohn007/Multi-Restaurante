@@ -609,6 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveUserBtn').addEventListener('click', function() {
         const form = document.getElementById('createUserForm');
         const formData = new FormData(form);
+        formData.append('ajax', '1');
         
         if (!form.checkValidity()) {
             form.classList.add('was-validated');
@@ -648,6 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('updateUserBtn').addEventListener('click', function() {
         const form = document.getElementById('editUserForm');
         const formData = new FormData(form);
+        formData.append('ajax', '1');
         
         fetch('<?php echo BASE_URL; ?>usuario/update', {
             method: 'POST',
@@ -682,6 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('resetPasswordBtn').addEventListener('click', function() {
         const form = document.getElementById('resetPasswordForm');
         const formData = new FormData(form);
+        formData.append('ajax', '1');
         
         if (!form.checkValidity()) {
             form.classList.add('was-validated');
