@@ -57,8 +57,14 @@ class Controller {
             $this->redirect('auth/login');
         }
         
-        if ($role && $_SESSION['user_role'] !== $role) {
-            $this->redirect('auth/unauthorized');
+        if ($role) {
+            // Support both single role string and array of roles
+            $allowedRoles = is_array($role) ? $role : [$role];
+            $userRole = $_SESSION['user_role'] ?? '';
+            
+            if (!in_array($userRole, $allowedRoles)) {
+                $this->redirect('auth/unauthorized');
+            }
         }
         
         return $_SESSION;
@@ -69,6 +75,13 @@ class Controller {
             session_start();
         }
         return isset($_SESSION['user_id']);
+    }
+    
+    protected function getUserRestaurantId() {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        return $_SESSION['restaurant_id'] ?? null;
     }
 }
 ?>

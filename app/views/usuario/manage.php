@@ -196,7 +196,7 @@
                                 </thead>
                                 <tbody>
                                     <?php foreach ($users as $user): ?>
-                                        <tr>
+                                        <tr data-restaurant-id="<?php echo $user['restaurant_id'] ?? ''; ?>">
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar-circle bg-<?php echo $user['role'] === 'superadmin' ? 'danger' : ($user['role'] === 'admin' ? 'primary' : 'info'); ?> text-white me-3">
@@ -559,24 +559,26 @@ document.addEventListener('DOMContentLoaded', function() {
         rows.forEach(row => {
             const text = row.textContent.toLowerCase();
             const role = row.querySelector('.badge').textContent.toLowerCase().trim();
-            const restaurantCell = row.cells[2]; // Restaurant column
-            const restaurantText = restaurantCell.textContent.toLowerCase().trim();
+            const restaurantId = row.getAttribute('data-restaurant-id') || '';
             
             let showRow = true;
             
+            // Filter by search term
             if (searchTerm && !text.includes(searchTerm)) {
                 showRow = false;
             }
             
+            // Filter by role
             if (roleValue && !role.includes(roleValue)) {
                 showRow = false;
             }
             
+            // Filter by restaurant - match by ID
             if (restaurantValue) {
-                // Check if the restaurant name/ID matches
-                const hasRestaurant = restaurantText.includes(restaurantValue) || 
-                                    restaurantCell.innerHTML.includes(`value="${restaurantValue}"`);
-                if (!hasRestaurant && restaurantText !== '—') {
+                if (restaurantValue !== restaurantId && restaurantId !== '') {
+                    showRow = false;
+                } else if (restaurantValue !== '' && restaurantId === '') {
+                    // If filtering for a specific restaurant but user has no restaurant
                     showRow = false;
                 }
             }
