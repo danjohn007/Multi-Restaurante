@@ -252,6 +252,30 @@ class SuperadminController extends Controller {
         $this->loadView('layout/footer');
     }
     
+    public function users() {
+        $userModel = $this->loadModel('User');
+        $users = $userModel->findAll([], 'created_at DESC');
+        
+        $data = [
+            'title' => 'Gestionar Usuarios - Superadmin',
+            'users' => $users
+        ];
+        
+        $this->loadView('layout/header', $data);
+        $this->loadView('superadmin/manage_users', $data);
+        $this->loadView('layout/footer');
+    }
+    
+    public function settings() {
+        $data = [
+            'title' => 'Configuración del Sistema - Superadmin'
+        ];
+        
+        $this->loadView('layout/header', $data);
+        $this->loadView('superadmin/system_config', $data);
+        $this->loadView('layout/footer');
+    }
+    
     private function getTotalReservations() {
         $stmt = $this->db->query("SELECT COUNT(*) FROM reservations");
         return $stmt->fetchColumn();
