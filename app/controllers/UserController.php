@@ -263,10 +263,10 @@ class UserController extends Controller {
                 if (isset($_POST['ajax'])) {
                     $this->jsonResponse([
                         'success' => true,
-                        'message' => 'Contraseña actualizada exitosamente'
+                        'message' => 'Contraseña restablecida exitosamente'
                     ]);
                 } else {
-                    $_SESSION['success'] = 'Contraseña actualizada exitosamente';
+                    $_SESSION['success'] = 'Contraseña restablecida exitosamente';
                     $this->redirect('usuario/manage');
                 }
                 
