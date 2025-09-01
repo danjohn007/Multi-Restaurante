@@ -5,9 +5,9 @@
 
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'multi_restaurante');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'ejercito_multirestaurante');
+define('DB_USER', 'ejercito_multirestaurante');
+define('DB_PASS', 'Danjohn007!');
 
 // Auto-detect base URL
 function getBaseUrl() {
