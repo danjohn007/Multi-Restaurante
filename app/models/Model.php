@@ -41,6 +41,27 @@ class Model {
         return $stmt->fetchAll();
     }
     
+    public function findOne($conditions = []) {
+        $sql = "SELECT * FROM {$this->table}";
+        $params = [];
+        
+        if (!empty($conditions)) {
+            $sql .= " WHERE ";
+            $whereClauses = [];
+            foreach ($conditions as $field => $value) {
+                $whereClauses[] = "$field = ?";
+                $params[] = $value;
+            }
+            $sql .= implode(' AND ', $whereClauses);
+        }
+        
+        $sql .= " LIMIT 1";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch();
+    }
+    
     public function create($data) {
         $fields = array_keys($data);
         $placeholders = str_repeat('?,', count($fields) - 1) . '?';
