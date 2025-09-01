@@ -43,6 +43,10 @@ $router->post('superadmin/restaurants/(\d+)/edit', 'SuperadminController@updateR
 $router->post('superadmin/restaurants/(\d+)/keywords', 'SuperadminController@updateKeywords');
 $router->post('superadmin/restaurants/(\d+)/toggle-status', 'SuperadminController@toggleStatus');
 
+// Additional routes for restaurante namespace (backward compatibility)
+$router->post('restaurante/update-keywords', 'SuperadminController@updateKeywordsCompat');
+$router->get('restaurante/edit', 'SuperadminController@restaurants');
+
 // Restaurant admin routes
 $router->get('admin', 'AdminController@dashboard');
 $router->get('admin/profile', 'AdminController@profile');

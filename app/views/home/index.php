@@ -89,7 +89,18 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100 shadow-sm restaurant-card">
                             <div class="card-img-top position-relative">
-                                <img src="<?php echo $restaurant['logo_url'] ?? BASE_URL . 'public/images/restaurant-placeholder.jpg'; ?>" 
+                                <img src="<?php 
+                                    if (!empty($restaurant['logo_url'])) {
+                                        // Check if it's already a full URL or relative path
+                                        if (strpos($restaurant['logo_url'], 'http') === 0) {
+                                            echo htmlspecialchars($restaurant['logo_url']);
+                                        } else {
+                                            echo BASE_URL . 'uploads/restaurants/' . htmlspecialchars($restaurant['logo_url']);
+                                        }
+                                    } else {
+                                        echo BASE_URL . 'public/images/restaurant-placeholder.jpg';
+                                    }
+                                ?>" 
                                      class="w-100" 
                                      alt="<?php echo htmlspecialchars($restaurant['name']); ?>"
                                      style="height: 200px; object-fit: cover;">

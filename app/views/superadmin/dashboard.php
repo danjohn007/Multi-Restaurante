@@ -212,18 +212,70 @@
             </div>
         </div>
 
-        <!-- Revenue Trends Chart -->
+        <!-- Restaurant Income and Reservations Report -->
         <div class="col-xl-4 mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="fas fa-chart-line text-success"></i> Tendencias de Ingresos
+                        <i class="fas fa-table text-success"></i> Ingresos y Reservaciones por Restaurante
                     </h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="revenueChart" width="300" height="150"></canvas>
+                    <?php if (!empty($restaurantStats)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurante</th>
+                                        <th class="text-center">Reservas</th>
+                                        <th class="text-end">Ingresos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach (array_slice($restaurantStats, 0, 6) as $restaurant): ?>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="<?php 
+                                                        if (!empty($restaurant['logo_url'])) {
+                                                            if (strpos($restaurant['logo_url'], 'http') === 0) {
+                                                                echo htmlspecialchars($restaurant['logo_url']);
+                                                            } else {
+                                                                echo BASE_URL . 'uploads/restaurants/' . htmlspecialchars($restaurant['logo_url']);
+                                                            }
+                                                        } else {
+                                                            echo BASE_URL . 'public/images/restaurant-placeholder.svg';
+                                                        }
+                                                    ?>" 
+                                                         class="rounded-circle me-2" 
+                                                         width="24" height="24" 
+                                                         style="object-fit: cover;">
+                                                    <small><?php echo htmlspecialchars(substr($restaurant['name'], 0, 15)) . (strlen($restaurant['name']) > 15 ? '...' : ''); ?></small>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-primary">
+                                                    <?php echo number_format($restaurant['total_reservations']); ?>
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="text-success fw-bold">
+                                                    $<?php echo number_format($restaurant['total_revenue'], 0); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                            <p class="mb-0">No hay datos disponibles</p>
+                        </div>
+                    <?php endif; ?>
                     <div class="mt-3 text-center">
-                        <small class="text-muted">Ingresos mensuales (últimos 6 meses)</small>
+                        <small class="text-muted">Reporte de ingresos y reservaciones</small>
                     </div>
                 </div>
             </div>
@@ -348,77 +400,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dashboard charts
-    initializeRevenueChart();
     initializeCuisineChart();
 });
-
-function initializeRevenueChart() {
-    // Sample revenue data for last 6 months - in real app this would come from server
-    const revenueData = {
-        labels: <?php echo json_encode(array_column(array_slice($stats['monthly_stats'] ?? [], 0, 6), 'month')); ?>,
-        datasets: [{
-            label: 'Ingresos ($)',
-            data: <?php 
-                // Generate sample revenue data based on reservations
-                $monthlyStats = array_slice($stats['monthly_stats'] ?? [], 0, 6);
-                $revenueData = array_map(function($stat) {
-                    return ($stat['reservations'] ?? 0) * 45; // Average $45 per reservation
-                }, $monthlyStats);
-                echo json_encode($revenueData);
-            ?>,
-            borderColor: 'rgb(40, 167, 69)',
-            backgroundColor: 'rgba(40, 167, 69, 0.1)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: 'rgb(40, 167, 69)',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2
-        }]
-    };
-
-    const ctx = document.getElementById('revenueChart');
-    if (ctx) {
-        new Chart(ctx, {
-            type: 'line',
-            data: revenueData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        display: true,
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        display: true,
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0,0,0,0.1)'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value;
-                            }
-                        }
-                    }
-                },
-                elements: {
-                    point: {
-                        radius: 4,
-                        hoverRadius: 8
-                    }
-                }
-            }
-        });
-    }
-}
 
 function initializeCuisineChart() {
     // Sample cuisine distribution data - in real app this would come from server

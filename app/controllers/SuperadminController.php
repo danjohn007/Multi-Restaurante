@@ -230,6 +230,35 @@ class SuperadminController extends Controller {
         }
     }
     
+    public function updateKeywordsCompat() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Método no permitido'], 405);
+        }
+        
+        try {
+            $restaurantModel = $this->loadModel('Restaurant');
+            $restaurantId = $_POST['restaurant_id'] ?? null;
+            
+            if (!$restaurantId) {
+                $this->jsonResponse(['success' => false, 'message' => 'ID de restaurante requerido'], 400);
+            }
+            
+            $restaurant = $restaurantModel->find($restaurantId);
+            
+            if (!$restaurant) {
+                $this->jsonResponse(['success' => false, 'message' => 'Restaurante no encontrado'], 404);
+            }
+            
+            $keywords = $_POST['keywords'] ?? '';
+            $restaurantModel->update($restaurantId, ['keywords' => $keywords]);
+            
+            $this->jsonResponse(['success' => true, 'message' => 'Keywords actualizadas exitosamente']);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'Error al actualizar keywords: ' . $e->getMessage()], 500);
+        }
+    }
+    
     public function toggleStatus($id) {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->jsonResponse(['success' => false, 'message' => 'Método no permitido'], 405);
