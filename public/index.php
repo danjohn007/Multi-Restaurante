@@ -101,6 +101,10 @@ $router->post('usuario/toggle-status', 'UserController@toggleStatus');
 $router->post('usuario/reset-password', 'UserController@resetPassword');
 $router->get('usuario/get/(\d+)', 'UserController@getUser');
 
+// Configuration routes
+$router->get('configuracion', 'ConfigController@index');
+$router->post('configuracion/save', 'ConfigController@save');
+
 // API routes
 $router->get('api/restaurants/search', 'ApiController@searchRestaurants');
 $router->get('api/restaurants/(\d+)/availability', 'ApiController@checkAvailability');

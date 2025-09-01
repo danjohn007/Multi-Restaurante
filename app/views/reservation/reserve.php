@@ -466,13 +466,8 @@ document.getElementById('reservationForm').addEventListener('submit', function(e
         return;
     }
     
-    // Add selected table to form data
-    const formData = new FormData(this);
-    formData.append('selected_table_id', selectedTable.id);
-    formData.append('ajax', '1');
-    
-    // Submit form with selected table
-    App.submitFormAjaxWithData(this, formData);
+    // Show confirmation popup with reservation summary
+    showReservationConfirmation(this);
 });
 
 // Auto-check availability if coming from restaurant page with parameters
@@ -502,6 +497,104 @@ function resetAvailability() {
     document.getElementById('tableAvailabilitySection').style.display = 'none';
     document.getElementById('submitBtn').style.display = 'none';
     document.querySelector('[onclick="checkAvailabilityBeforeSubmit()"]').style.display = 'inline-block';
+}
+
+// Show reservation confirmation popup
+function showReservationConfirmation(form) {
+    const formData = new FormData(form);
+    const customerName = formData.get('customer_name');
+    const customerPhone = formData.get('customer_phone');
+    const customerEmail = formData.get('customer_email') || 'No especificado';
+    const reservationDate = formData.get('reservation_date');
+    const reservationTime = formData.get('reservation_time');
+    const partySize = formData.get('party_size');
+    const specialRequests = formData.get('special_requests') || 'Ninguna';
+    
+    // Format date for display
+    const dateObj = new Date(reservationDate);
+    const formattedDate = dateObj.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    const confirmationHTML = `
+        <div class="modal fade" id="reservationConfirmModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Confirmar Reservación
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Información del Cliente</h6>
+                                <p><strong>Nombre:</strong> ${customerName}</p>
+                                <p><strong>Teléfono:</strong> ${customerPhone}</p>
+                                <p><strong>Email:</strong> ${customerEmail}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Detalles de la Reservación</h6>
+                                <p><strong>Fecha:</strong> ${formattedDate}</p>
+                                <p><strong>Hora:</strong> ${reservationTime}</p>
+                                <p><strong>Personas:</strong> ${partySize}</p>
+                                <p><strong>Mesa:</strong> ${selectedTable.name} (Capacidad: ${selectedTable.capacity})</p>
+                            </div>
+                        </div>
+                        ${specialRequests !== 'Ninguna' ? `
+                            <div class="mt-3">
+                                <h6 class="text-primary">Solicitudes Especiales</h6>
+                                <p>${specialRequests}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>¡Importante!</strong> Por favor verifique que todos los datos sean correctos antes de confirmar su reservación.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                        <button type="button" class="btn btn-primary" id="confirmReservationBtn">
+                            <i class="fas fa-check me-2"></i>Confirmar Reservación
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('reservationConfirmModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', confirmationHTML);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('reservationConfirmModal'));
+    modal.show();
+    
+    // Handle confirmation
+    document.getElementById('confirmReservationBtn').addEventListener('click', function() {
+        modal.hide();
+        
+        // Now submit the form
+        const formData = new FormData(form);
+        formData.append('selected_table_id', selectedTable.id);
+        formData.append('ajax', '1');
+        
+        App.submitFormAjaxWithData(form, formData);
+    });
 }
 </script>
 
