@@ -43,5 +43,16 @@ class User extends Model {
         $user = $this->find($userId);
         return $user && $user['is_active'] == 1;
     }
+    
+    public function findAllWithRestaurants() {
+        $stmt = $this->db->prepare("
+            SELECT u.*, r.name as restaurant_name 
+            FROM users u 
+            LEFT JOIN restaurants r ON u.restaurant_id = r.id 
+            ORDER BY u.id
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
 ?>

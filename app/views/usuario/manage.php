@@ -218,7 +218,7 @@
                                             </td>
                                             
                                             <td>
-                                                <?php if ($user['restaurant_name']): ?>
+                                                <?php if (isset($user['restaurant_name']) && $user['restaurant_name']): ?>
                                                     <div class="small">
                                                         <i class="fas fa-store text-muted"></i>
                                                         <?php echo htmlspecialchars($user['restaurant_name']); ?>
@@ -242,7 +242,7 @@
                                             
                                             <td>
                                                 <small class="text-muted">
-                                                    <?php if ($user['last_login']): ?>
+                                                    <?php if (isset($user['last_login']) && $user['last_login']): ?>
                                                         <i class="fas fa-clock"></i>
                                                         <?php echo date('d/m/Y H:i', strtotime($user['last_login'])); ?>
                                                     <?php else: ?>
