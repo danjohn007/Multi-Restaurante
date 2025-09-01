@@ -199,6 +199,23 @@
             </div>
         </div>
 
+        <!-- Mini Analytics Chart -->
+        <div class="col-xl-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-area"></i> Resumen Analítico
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="dashboardMiniChart" width="300" height="150"></canvas>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">Reservaciones por mes (últimos 6 meses)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Quick Actions -->
         <div class="col-xl-4 mb-4">
             <div class="card h-100">
@@ -294,3 +311,69 @@
         </div>
     <?php endif; ?>
 </div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize mini chart for dashboard
+    initializeDashboardChart();
+});
+
+function initializeDashboardChart() {
+    // Sample data for last 6 months - in real app this would come from server
+    const monthlyData = {
+        labels: <?php echo json_encode(array_column(array_slice($stats['monthly_stats'] ?? [], 0, 6), 'month')); ?>,
+        datasets: [{
+            label: 'Reservaciones',
+            data: <?php echo json_encode(array_column(array_slice($stats['monthly_stats'] ?? [], 0, 6), 'reservations')); ?>,
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    };
+
+    const ctx = document.getElementById('dashboardMiniChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: monthlyData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 3,
+                        hoverRadius: 6
+                    }
+                }
+            }
+        });
+    }
+}
+</script>

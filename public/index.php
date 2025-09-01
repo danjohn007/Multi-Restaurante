@@ -32,6 +32,7 @@ $router->get('auth/unauthorized', 'AuthController@unauthorized');
 // Superadmin routes
 $router->get('superadmin', 'SuperadminController@dashboard');
 $router->get('superadmin/restaurants', 'SuperadminController@restaurants');
+$router->get('superadmin/restaurants/inactive', 'SuperadminController@inactiveRestaurants');
 $router->get('superadmin/metrics', 'SuperadminController@globalMetrics');
 $router->get('superadmin/users', 'SuperadminController@users');
 $router->get('superadmin/settings', 'SuperadminController@settings');
