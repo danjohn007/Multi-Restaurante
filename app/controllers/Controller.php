@@ -34,13 +34,17 @@ class Controller {
     }
     
     protected function redirect($url) {
-        header('Location: ' . BASE_URL . ltrim($url, '/'));
+        if (!headers_sent()) {
+            header('Location: ' . BASE_URL . ltrim($url, '/'));
+        }
         exit;
     }
     
     protected function jsonResponse($data, $status = 200) {
-        header('Content-Type: application/json');
-        http_response_code($status);
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+            http_response_code($status);
+        }
         echo json_encode($data);
         exit;
     }

@@ -110,10 +110,16 @@ class Router {
     }
     
     private function show404() {
-        header("HTTP/1.0 404 Not Found");
-        echo "<h1>404 - Page Not Found</h1>";
-        echo "<p>The requested page could not be found.</p>";
-        echo "<a href='" . BASE_URL . "'>Go Home</a>";
+        if (!headers_sent()) {
+            header("HTTP/1.0 404 Not Found");
+            echo "<h1>404 - Page Not Found</h1>";
+            echo "<p>The requested page could not be found.</p>";
+            echo "<a href='" . BASE_URL . "'>Go Home</a>";
+        } else {
+            echo "<div style='background: #dc3545; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;'>";
+            echo "<strong>Error 404:</strong> Page Not Found";
+            echo "</div>";
+        }
     }
 }
 ?>

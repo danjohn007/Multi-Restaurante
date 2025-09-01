@@ -32,10 +32,13 @@ $router->get('auth/unauthorized', 'AuthController@unauthorized');
 // Superadmin routes
 $router->get('superadmin', 'SuperadminController@dashboard');
 $router->get('superadmin/restaurants', 'SuperadminController@restaurants');
+$router->get('superadmin/metrics', 'SuperadminController@globalMetrics');
 $router->get('superadmin/restaurants/create', 'SuperadminController@createRestaurant');
 $router->post('superadmin/restaurants/create', 'SuperadminController@storeRestaurant');
 $router->get('superadmin/restaurants/(\d+)/edit', 'SuperadminController@editRestaurant');
 $router->post('superadmin/restaurants/(\d+)/edit', 'SuperadminController@updateRestaurant');
+$router->post('superadmin/restaurants/(\d+)/keywords', 'SuperadminController@updateKeywords');
+$router->post('superadmin/restaurants/(\d+)/toggle-status', 'SuperadminController@toggleStatus');
 
 // Restaurant admin routes
 $router->get('admin', 'AdminController@dashboard');
@@ -76,9 +79,17 @@ try {
     // Log error and show generic error page
     error_log($e->getMessage());
     
-    header("HTTP/1.0 500 Internal Server Error");
-    echo "<h1>500 - Internal Server Error</h1>";
-    echo "<p>Something went wrong. Please try again later.</p>";
-    echo "<a href='" . BASE_URL . "'>Go Home</a>";
+    // Only send headers if they haven't been sent already
+    if (!headers_sent()) {
+        header("HTTP/1.0 500 Internal Server Error");
+        echo "<h1>500 - Internal Server Error</h1>";
+        echo "<p>Something went wrong. Please try again later.</p>";
+        echo "<a href='" . BASE_URL . "'>Go Home</a>";
+    } else {
+        // Headers already sent, just output error in current context
+        echo "<div style='background: #dc3545; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;'>";
+        echo "<strong>Error:</strong> " . htmlspecialchars($e->getMessage());
+        echo "</div>";
+    }
 }
 ?>
