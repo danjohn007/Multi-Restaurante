@@ -1,15 +1,22 @@
 <?php
 /**
- * Main application entry point
+ * Test application entry point - using SQLite for testing header fixes
  * Multi-Restaurant Reservation System
  */
 
-// Include configuration and core files
-require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../includes/Database.php';
+// Include test configuration and core files
+require_once __DIR__ . '/../config/test_config.php';
+require_once __DIR__ . '/../includes/TestDatabase.php';
 require_once __DIR__ . '/../includes/Router.php';
 require_once __DIR__ . '/../app/models/Model.php';
 require_once __DIR__ . '/../app/controllers/Controller.php';
+
+// Override Database class with TestDatabase for testing
+class Database {
+    public static function getInstance() {
+        return TestDatabase::getInstance();
+    }
+}
 
 // Start session
 session_start();

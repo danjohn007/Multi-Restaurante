@@ -10,8 +10,14 @@ class ReservationController extends Controller {
         $restaurant = $restaurantModel->find($id);
         
         if (!$restaurant || !$restaurant['is_active']) {
-            header("HTTP/1.0 404 Not Found");
-            echo "<h1>404 - Restaurante no encontrado</h1>";
+            if (!headers_sent()) {
+                header("HTTP/1.0 404 Not Found");
+                echo "<h1>404 - Restaurante no encontrado</h1>";
+            } else {
+                echo "<div style='background: #dc3545; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;'>";
+                echo "<strong>Error 404:</strong> Restaurante no encontrado";
+                echo "</div>";
+            }
             return;
         }
         
@@ -40,8 +46,14 @@ class ReservationController extends Controller {
         $restaurant = $restaurantModel->find($id);
         
         if (!$restaurant || !$restaurant['is_active']) {
-            header("HTTP/1.0 404 Not Found");
-            echo "<h1>404 - Restaurante no encontrado</h1>";
+            if (!headers_sent()) {
+                header("HTTP/1.0 404 Not Found");
+                echo "<h1>404 - Restaurante no encontrado</h1>";
+            } else {
+                echo "<div style='background: #dc3545; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;'>";
+                echo "<strong>Error 404:</strong> Restaurante no encontrado";
+                echo "</div>";
+            }
             return;
         }
         
@@ -188,8 +200,14 @@ class ReservationController extends Controller {
         $reservation = $this->getReservation($id);
         
         if (!$reservation) {
-            header("HTTP/1.0 404 Not Found");
-            echo "<h1>404 - Reservación no encontrada</h1>";
+            if (!headers_sent()) {
+                header("HTTP/1.0 404 Not Found");
+                echo "<h1>404 - Reservación no encontrada</h1>";
+            } else {
+                echo "<div style='background: #dc3545; color: white; padding: 10px; margin: 10px 0; border-radius: 5px;'>";
+                echo "<strong>Error 404:</strong> Reservación no encontrada";
+                echo "</div>";
+            }
             return;
         }
         

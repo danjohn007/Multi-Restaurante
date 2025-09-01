@@ -184,6 +184,55 @@ class SuperadminController extends Controller {
         }
     }
     
+    public function updateKeywords($id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Método no permitido'], 405);
+        }
+        
+        try {
+            $restaurantModel = $this->loadModel('Restaurant');
+            $restaurant = $restaurantModel->find($id);
+            
+            if (!$restaurant) {
+                $this->jsonResponse(['success' => false, 'message' => 'Restaurante no encontrado'], 404);
+            }
+            
+            $keywords = $_POST['keywords'] ?? '';
+            $restaurantModel->update($id, ['keywords' => $keywords]);
+            
+            $this->jsonResponse(['success' => true, 'message' => 'Keywords actualizadas exitosamente']);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'Error al actualizar keywords: ' . $e->getMessage()], 500);
+        }
+    }
+    
+    public function toggleStatus($id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Método no permitido'], 405);
+        }
+        
+        try {
+            $restaurantModel = $this->loadModel('Restaurant');
+            $restaurant = $restaurantModel->find($id);
+            
+            if (!$restaurant) {
+                $this->jsonResponse(['success' => false, 'message' => 'Restaurante no encontrado'], 404);
+            }
+            
+            $newStatus = $_POST['status'] ?? '';
+            $isActive = ($newStatus === 'active') ? 1 : 0;
+            
+            $restaurantModel->update($id, ['is_active' => $isActive]);
+            
+            $action = $isActive ? 'activa' : 'desactiva';
+            $this->jsonResponse(['success' => true, 'message' => "Restaurante {$action}do exitosamente"]);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'Error al cambiar estado: ' . $e->getMessage()], 500);
+        }
+    }
+    
     public function globalMetrics() {
         // Get global metrics
         $metrics = [
