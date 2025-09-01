@@ -24,6 +24,67 @@
         </div>
     </div>
 
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-filter"></i> Filtros de Métricas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form id="metricsFiltersForm">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="date_from" class="form-label">Fecha Desde</label>
+                                <input type="date" class="form-control" id="date_from" name="date_from" 
+                                       value="<?php echo date('Y-m-01'); ?>">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="date_to" class="form-label">Fecha Hasta</label>
+                                <input type="date" class="form-control" id="date_to" name="date_to" 
+                                       value="<?php echo date('Y-m-d'); ?>">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="restaurant_filter" class="form-label">Restaurante</label>
+                                <select class="form-select" id="restaurant_filter" name="restaurant_id">
+                                    <option value="">Todos los restaurantes</option>
+                                    <?php foreach ($filterData['restaurants'] ?? [] as $restaurant): ?>
+                                        <option value="<?php echo $restaurant['id']; ?>">
+                                            <?php echo htmlspecialchars($restaurant['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="food_type_filter" class="form-label">Tipo de Cocina</label>
+                                <select class="form-select" id="food_type_filter" name="food_type">
+                                    <option value="">Todos los tipos</option>
+                                    <?php foreach ($filterData['food_types'] ?? [] as $type): ?>
+                                        <option value="<?php echo htmlspecialchars($type); ?>">
+                                            <?php echo htmlspecialchars($type); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-9">
+                                <label for="keywords_filter" class="form-label">Palabras Clave</label>
+                                <input type="text" class="form-control" id="keywords_filter" name="keywords" 
+                                       placeholder="Buscar por palabras clave de restaurantes...">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" class="btn btn-primary w-100" id="applyFiltersBtn">
+                                    <i class="fas fa-filter"></i> Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Key Performance Indicators -->
     <div class="row mb-4">
         <div class="col-lg-3 col-md-6 mb-3">
@@ -502,6 +563,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
     
+    // Apply filters functionality
+    document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+        const form = document.getElementById('metricsFiltersForm');
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Filtrando...';
+        
+        // Apply filters via AJAX
+        const params = new URLSearchParams(formData);
+        params.append('ajax', '1');
+        
+        fetch('<?php echo BASE_URL; ?>superadmin/metrics?' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the page with filtered data
+                    updateMetricsDisplay(data.metrics);
+                    App.showAlert('success', 'Filtros aplicados correctamente');
+                } else {
+                    App.showAlert('danger', data.message || 'Error al aplicar filtros');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                App.showAlert('danger', 'Error de conexión al aplicar filtros');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+    });
+    
     function initializeCharts() {
         // Reservations Trend Chart
         const reservationsTrendCtx = document.getElementById('reservationsTrendChart');
@@ -586,6 +683,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+        }
+    }
+    
+    function updateMetricsDisplay(metrics) {
+        // Update KPI cards
+        document.querySelector('.col-lg-3:nth-child(1) .h3').textContent = metrics.total_restaurants || 0;
+        document.querySelector('.col-lg-3:nth-child(2) .h3').textContent = metrics.total_reservations || 0;
+        document.querySelector('.col-lg-3:nth-child(3) .h3').textContent = metrics.total_customers || 0;
+        document.querySelector('.col-lg-3:nth-child(4) .h3').textContent = (metrics.avg_occupancy || 0).toFixed(1) + '%';
+        
+        // Update charts with new data if they exist
+        if (window.reservationsTrendChart) {
+            window.reservationsTrendChart.data.labels = metrics.chart_data.reservation_dates || [];
+            window.reservationsTrendChart.data.datasets[0].data = metrics.chart_data.reservation_counts || [];
+            window.reservationsTrendChart.update();
+        }
+        
+        if (window.cuisineTypesChart) {
+            window.cuisineTypesChart.data.labels = metrics.chart_data.cuisine_labels || [];
+            window.cuisineTypesChart.data.datasets[0].data = metrics.chart_data.cuisine_counts || [];
+            window.cuisineTypesChart.update();
+        }
+        
+        if (window.hourlyDistributionChart) {
+            window.hourlyDistributionChart.data.labels = metrics.chart_data.hourly_labels || [];
+            window.hourlyDistributionChart.data.datasets[0].data = metrics.chart_data.hourly_counts || [];
+            window.hourlyDistributionChart.update();
         }
     }
 });

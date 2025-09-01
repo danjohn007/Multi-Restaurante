@@ -111,6 +111,37 @@
         </div>
     </div>
 
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- Reservations Trend Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-primary"></i> Tendencia de Reservaciones (Últimos 30 días)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="reservationsTrendChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Revenue by Restaurant Chart -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie text-success"></i> Ingresos por Restaurante
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueByRestaurantChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Row -->
     <div class="row">
         <!-- Restaurants Management -->
@@ -294,3 +325,105 @@
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard charts
+    initializeDashboardCharts();
+    
+    function initializeDashboardCharts() {
+        // Reservations Trend Chart
+        const reservationsTrendCtx = document.getElementById('reservationsTrendChart');
+        if (reservationsTrendCtx) {
+            new Chart(reservationsTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: <?php echo json_encode($chartData['reservation_dates'] ?? []); ?>,
+                    datasets: [{
+                        label: 'Reservaciones por día',
+                        data: <?php echo json_encode($chartData['reservation_counts'] ?? []); ?>,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Revenue by Restaurant Chart
+        const revenueByRestaurantCtx = document.getElementById('revenueByRestaurantChart');
+        if (revenueByRestaurantCtx) {
+            new Chart(revenueByRestaurantCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: <?php echo json_encode($chartData['restaurant_names'] ?? []); ?>,
+                    datasets: [{
+                        data: <?php echo json_encode($chartData['restaurant_revenues'] ?? []); ?>,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB', 
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                            '#FF6384',
+                            '#C7E596'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = new Intl.NumberFormat('es-MX', {
+                                        style: 'currency',
+                                        currency: 'MXN'
+                                    }).format(context.raw);
+                                    return label + ': ' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+});
+</script>
