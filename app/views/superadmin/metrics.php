@@ -213,21 +213,7 @@
         </div>
     </div>
 
-    <!-- Most Active Restaurants Chart -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-bar"></i> Restaurantes Más Activos
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="mostActiveRestaurantsChart" width="400" height="120"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Top Restaurants -->
     <div class="row mb-4">
@@ -391,16 +377,7 @@ function initializeCharts() {
         }]
     };
 
-    const mostActiveRestaurantsData = {
-        labels: <?php echo json_encode(array_column($metrics['top_restaurants'] ?? [], 'name')); ?>,
-        datasets: [{
-            label: 'Reservaciones',
-            data: <?php echo json_encode(array_column($metrics['top_restaurants'] ?? [], 'reservations')); ?>,
-            backgroundColor: 'rgba(54, 162, 235, 0.8)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-    };
+
 
     // Sales by Date Chart
     const salesByDateCtx = document.getElementById('salesByDateChart').getContext('2d');
@@ -450,32 +427,7 @@ function initializeCharts() {
         }
     });
 
-    // Most Active Restaurants Chart
-    const mostActiveCtx = document.getElementById('mostActiveRestaurantsChart').getContext('2d');
-    new Chart(mostActiveCtx, {
-        type: 'bar',
-        data: mostActiveRestaurantsData,
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Restaurantes por Número de Reservaciones'
-                },
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
+
 }
 
 function applyFilters() {

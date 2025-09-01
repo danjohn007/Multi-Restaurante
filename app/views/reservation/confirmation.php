@@ -1,18 +1,19 @@
-<div class="container py-4">
-    <!-- Success Header -->
+<div class="container-fluid py-4">
+    <!-- Page Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="alert alert-success d-flex align-items-center">
-                <i class="fas fa-check-circle fa-3x me-3"></i>
-                <div>
-                    <h4 class="alert-heading mb-1">¡Reservación Confirmada!</h4>
-                    <p class="mb-0">Su reservación ha sido procesada exitosamente</p>
+            <div class="text-center">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
                 </div>
+                <h1 class="h2 text-success mb-2">¡Reservación Confirmada!</h1>
+                <p class="text-muted mb-4">
+                    Su reservación ha sido procesada exitosamente. A continuación encontrará los detalles.
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- Reservation Details -->
     <div class="row">
         <div class="col-lg-8">
             <div class="card">
@@ -179,18 +180,26 @@
         </div>
     </div>
     
-    <!-- Important Information -->
-    <div class="row mt-4">
-        <div class="col-12">
+<!-- Additional Info -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8 col-xl-6">
             <div class="alert alert-info">
-                <h6><i class="fas fa-info-circle"></i> Información Importante</h6>
-                <ul class="mb-0">
-                    <li>Por favor llegue 10 minutos antes de su hora de reservación</li>
-                    <li>Si necesita cancelar o modificar su reservación, contacte al restaurante directamente</li>
-                    <li>Conserve este número de reservación para futuras referencias</li>
-                    <li>En caso de retraso, contacte al restaurante para mantener su mesa</li>
-                </ul>
+                <h6 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle"></i> Importante
+                </h6>
+                <p class="mb-0">
+                    Si necesita modificar o cancelar su reservación, por favor contacte directamente al restaurante 
+                    con anticipación. Mantenga este número de reservación como referencia.
+                </p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+@media print {
+    .btn, .alert {
+        display: none !important;
+    }
+}
+</style>

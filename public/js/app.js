@@ -106,7 +106,9 @@ const App = {
         .catch(error => {
             console.error('Error:', error);
             this.showAlert('danger', 'Error de conexión');
-            // Reset button
+   })
+        .finally(() => {
+            // Restore button state
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         });
