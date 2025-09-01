@@ -320,17 +320,8 @@ class SuperadminController extends Controller {
     }
     
     public function users() {
-        $userModel = $this->loadModel('User');
-        $users = $userModel->findAll([], 'created_at DESC');
-        
-        $data = [
-            'title' => 'Gestionar Usuarios - Superadmin',
-            'users' => $users
-        ];
-        
-        $this->loadView('layout/header', $data);
-        $this->loadView('superadmin/manage_users', $data);
-        $this->loadView('layout/footer');
+        // Redirect to the UserController manage method instead
+        $this->redirect('usuario/manage');
     }
     
     public function settings() {

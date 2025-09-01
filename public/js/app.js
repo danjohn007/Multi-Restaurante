@@ -106,10 +106,6 @@ const App = {
         .catch(error => {
             console.error('Error:', error);
             this.showAlert('danger', 'Error de conexión');
-            // Reset button
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        });
         })
         .finally(() => {
             // Restore button state
