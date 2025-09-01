@@ -10,11 +10,15 @@ class UserController extends Controller {
     
     public function manage() {
         $userModel = $this->loadModel('User');
-        $users = $userModel->findAll();
+        $restaurantModel = $this->loadModel('Restaurant');
+        
+        $users = $userModel->findAllWithRestaurants();
+        $restaurants = $restaurantModel->getActive();
         
         $data = [
             'title' => 'Gestión de Usuarios',
-            'users' => $users
+            'users' => $users,
+            'restaurants' => $restaurants
         ];
         
         $this->loadView('layout/header', $data);

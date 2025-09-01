@@ -218,7 +218,7 @@
                                             </td>
                                             
                                             <td>
-                                                <?php if ($user['restaurant_name']): ?>
+                                                <?php if (isset($user['restaurant_name']) && $user['restaurant_name']): ?>
                                                     <div class="small">
                                                         <i class="fas fa-store text-muted"></i>
                                                         <?php echo htmlspecialchars($user['restaurant_name']); ?>
@@ -242,7 +242,7 @@
                                             
                                             <td>
                                                 <small class="text-muted">
-                                                    <?php if ($user['last_login']): ?>
+                                                    <?php if (isset($user['last_login']) && $user['last_login']): ?>
                                                         <i class="fas fa-clock"></i>
                                                         <?php echo date('d/m/Y H:i', strtotime($user['last_login'])); ?>
                                                     <?php else: ?>
@@ -609,6 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveUserBtn').addEventListener('click', function() {
         const form = document.getElementById('createUserForm');
         const formData = new FormData(form);
+        formData.append('ajax', '1');
         
         if (!form.checkValidity()) {
             form.classList.add('was-validated');
@@ -648,6 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('updateUserBtn').addEventListener('click', function() {
         const form = document.getElementById('editUserForm');
         const formData = new FormData(form);
+        formData.append('ajax', '1');
         
         fetch('<?php echo BASE_URL; ?>usuario/update', {
             method: 'POST',
@@ -682,6 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('resetPasswordBtn').addEventListener('click', function() {
         const form = document.getElementById('resetPasswordForm');
         const formData = new FormData(form);
+        formData.append('ajax', '1');
         
         if (!form.checkValidity()) {
             form.classList.add('was-validated');
