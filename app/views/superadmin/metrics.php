@@ -46,34 +46,34 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form id="metricsFiltersForm" class="row g-3">
+                    <form id="metricsFiltersForm" class="row g-3" method="GET">
                         <div class="col-md-3">
                             <label for="date_from" class="form-label">Fecha Desde</label>
                             <input type="date" class="form-control" id="date_from" name="date_from" 
-                                   value="<?php echo date('Y-m-01'); ?>">
+                                   value="<?php echo $_GET['date_from'] ?? date('Y-m-01'); ?>">
                         </div>
                         <div class="col-md-3">
                             <label for="date_to" class="form-label">Fecha Hasta</label>
                             <input type="date" class="form-control" id="date_to" name="date_to" 
-                                   value="<?php echo date('Y-m-d'); ?>">
+                                   value="<?php echo $_GET['date_to'] ?? date('Y-m-d'); ?>">
                         </div>
                         <div class="col-md-3">
                             <label for="food_type_filter" class="form-label">Tipo de Cocina</label>
                             <select class="form-select" id="food_type_filter" name="food_type">
                                 <option value="">Todos los tipos</option>
-                                <option value="Italiana">Italiana</option>
-                                <option value="Mexicana">Mexicana</option>
-                                <option value="Japonesa">Japonesa</option>
-                                <option value="China">China</option>
-                                <option value="Americana">Americana</option>
-                                <option value="Argentina">Argentina</option>
-                                <option value="Mediterránea">Mediterránea</option>
-                                <option value="Internacional">Internacional</option>
-                                <option value="Mariscos">Mariscos</option>
-                                <option value="Vegetariana">Vegetariana</option>
-                                <option value="Steakhouse">Steakhouse</option>
-                                <option value="Café">Café</option>
-                                <option value="Otro">Otro</option>
+                                <option value="Italiana" <?php echo (($_GET['food_type'] ?? '') === 'Italiana') ? 'selected' : ''; ?>>Italiana</option>
+                                <option value="Mexicana" <?php echo (($_GET['food_type'] ?? '') === 'Mexicana') ? 'selected' : ''; ?>>Mexicana</option>
+                                <option value="Japonesa" <?php echo (($_GET['food_type'] ?? '') === 'Japonesa') ? 'selected' : ''; ?>>Japonesa</option>
+                                <option value="China" <?php echo (($_GET['food_type'] ?? '') === 'China') ? 'selected' : ''; ?>>China</option>
+                                <option value="Americana" <?php echo (($_GET['food_type'] ?? '') === 'Americana') ? 'selected' : ''; ?>>Americana</option>
+                                <option value="Argentina" <?php echo (($_GET['food_type'] ?? '') === 'Argentina') ? 'selected' : ''; ?>>Argentina</option>
+                                <option value="Mediterránea" <?php echo (($_GET['food_type'] ?? '') === 'Mediterránea') ? 'selected' : ''; ?>>Mediterránea</option>
+                                <option value="Internacional" <?php echo (($_GET['food_type'] ?? '') === 'Internacional') ? 'selected' : ''; ?>>Internacional</option>
+                                <option value="Mariscos" <?php echo (($_GET['food_type'] ?? '') === 'Mariscos') ? 'selected' : ''; ?>>Mariscos</option>
+                                <option value="Vegetariana" <?php echo (($_GET['food_type'] ?? '') === 'Vegetariana') ? 'selected' : ''; ?>>Vegetariana</option>
+                                <option value="Steakhouse" <?php echo (($_GET['food_type'] ?? '') === 'Steakhouse') ? 'selected' : ''; ?>>Steakhouse</option>
+                                <option value="Café" <?php echo (($_GET['food_type'] ?? '') === 'Café') ? 'selected' : ''; ?>>Café</option>
+                                <option value="Otro" <?php echo (($_GET['food_type'] ?? '') === 'Otro') ? 'selected' : ''; ?>>Otro</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -82,7 +82,8 @@
                                 <option value="">Todos los restaurantes</option>
                                 <?php if (!empty($metrics['all_restaurants'])): ?>
                                     <?php foreach ($metrics['all_restaurants'] as $restaurant): ?>
-                                        <option value="<?php echo $restaurant['id']; ?>">
+                                        <option value="<?php echo $restaurant['id']; ?>" 
+                                                <?php echo (($_GET['restaurant_id'] ?? '') == $restaurant['id']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($restaurant['name']); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -92,7 +93,8 @@
                         <div class="col-md-9">
                             <label for="keyword_filter" class="form-label">Palabra Clave</label>
                             <input type="text" class="form-control" id="keyword_filter" name="keyword" 
-                                   placeholder="Buscar por palabra clave en nombre o descripción...">
+                                   placeholder="Buscar por palabra clave en nombre o descripción..."
+                                   value="<?php echo htmlspecialchars($_GET['keyword'] ?? ''); ?>">
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">
@@ -477,50 +479,30 @@ function initializeCharts() {
 }
 
 function applyFilters() {
-    const formData = new FormData(document.getElementById('metricsFiltersForm'));
-    const params = new URLSearchParams();
-    
-    for (let [key, value] of formData.entries()) {
-        if (value) {
-            params.append(key, value);
-        }
-    }
-    
-    // Add ajax parameter
-    params.append('ajax', '1');
-    
-    // Show loading state
-    App.showAlert('info', 'Aplicando filtros...');
-    
-    // Fetch filtered data
-    fetch('<?php echo BASE_URL; ?>superadmin/metrics?' + params.toString())
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                updateChartsWithData(data.metrics);
-                App.showAlert('success', 'Filtros aplicados exitosamente');
-            } else {
-                App.showAlert('danger', 'Error al aplicar filtros: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            App.showAlert('danger', 'Error de conexión al aplicar filtros');
-        });
+    // Simple form submission - let the server handle filtering
+    document.getElementById('metricsFiltersForm').submit();
 }
 
-function updateChartsWithData(metrics) {
-    // This function would update the charts with new filtered data
-    // For now, it will just reload the page with the new parameters
-    const formData = new FormData(document.getElementById('metricsFiltersForm'));
-    const params = new URLSearchParams();
+// Remove the complex AJAX handling for now and use simple form submission
+document.addEventListener('DOMContentLoaded', function() {
+    // Add clear filters button functionality
+    const clearFiltersBtn = document.createElement('button');
+    clearFiltersBtn.type = 'button';
+    clearFiltersBtn.className = 'btn btn-outline-secondary';
+    clearFiltersBtn.innerHTML = '<i class="fas fa-times"></i> Limpiar Filtros';
+    clearFiltersBtn.onclick = function() {
+        window.location.href = '<?php echo BASE_URL; ?>superadmin/metrics';
+    };
     
-    for (let [key, value] of formData.entries()) {
-        if (value) {
-            params.append(key, value);
-        }
-    }
+    // Add the clear button next to the apply button
+    const submitButtonContainer = document.querySelector('button[type="submit"]').parentNode;
+    const clearButtonContainer = document.createElement('div');
+    clearButtonContainer.className = 'col-md-3 d-flex align-items-end';
+    clearButtonContainer.appendChild(clearFiltersBtn);
+    submitButtonContainer.parentNode.insertBefore(clearButtonContainer, submitButtonContainer);
     
-    window.location.href = '<?php echo BASE_URL; ?>superadmin/metrics?' + params.toString();
-}
+    // Update container classes to accommodate both buttons
+    submitButtonContainer.className = 'col-md-3 d-flex align-items-end';
+    document.querySelector('.col-md-9').className = 'col-md-6';
+});
 </script>

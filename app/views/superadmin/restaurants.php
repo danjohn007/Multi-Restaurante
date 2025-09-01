@@ -94,10 +94,23 @@
                                         <tr data-restaurant-id="<?php echo $restaurant['id']; ?>">
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="<?php echo $restaurant['logo_url'] ?? BASE_URL . 'public/images/restaurant-placeholder.jpg'; ?>" 
+                                                    <img src="<?php 
+                                                        if (!empty($restaurant['logo_url'])) {
+                                                            // Check if it's already a full URL or relative path
+                                                            if (strpos($restaurant['logo_url'], 'http') === 0) {
+                                                                echo htmlspecialchars($restaurant['logo_url']);
+                                                            } else {
+                                                                echo BASE_URL . 'uploads/restaurants/' . htmlspecialchars($restaurant['logo_url']);
+                                                            }
+                                                        } else {
+                                                            echo BASE_URL . 'public/images/restaurant-placeholder.svg';
+                                                        }
+                                                    ?>" 
                                                          class="rounded me-3" 
                                                          width="60" height="60"
-                                                         alt="<?php echo htmlspecialchars($restaurant['name']); ?>">
+                                                         alt="<?php echo htmlspecialchars($restaurant['name']); ?>"
+                                                         style="object-fit: cover;"
+                                                         onerror="this.src='<?php echo BASE_URL; ?>public/images/restaurant-placeholder.svg'">
                                                     <div>
                                                         <div class="fw-bold"><?php echo htmlspecialchars($restaurant['name']); ?></div>
                                                         <small class="text-muted">

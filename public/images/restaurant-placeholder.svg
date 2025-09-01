@@ -1,0 +1,10 @@
+<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">
+        <tspan x="60" dy="0">Imagen del</tspan>
+        <tspan x="60" dy="14">Restaurante</tspan>
+        <tspan x="60" dy="14">No Disponible</tspan>
+    </text>
+    <circle cx="60" cy="75" r="15" fill="none" stroke="#6c757d" stroke-width="2"/>
+    <path d="M50 75 L55 80 L70 65" stroke="#6c757d" stroke-width="2" fill="none"/>
+</svg>

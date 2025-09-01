@@ -6,9 +6,22 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-2">
-                            <img src="<?php echo $restaurant['logo_url'] ?? BASE_URL . 'public/images/restaurant-placeholder.jpg'; ?>" 
+                            <img src="<?php 
+                                if (!empty($restaurant['logo_url'])) {
+                                    // Check if it's already a full URL or relative path
+                                    if (strpos($restaurant['logo_url'], 'http') === 0) {
+                                        echo htmlspecialchars($restaurant['logo_url']);
+                                    } else {
+                                        echo BASE_URL . 'uploads/restaurants/' . htmlspecialchars($restaurant['logo_url']);
+                                    }
+                                } else {
+                                    echo BASE_URL . 'public/images/restaurant-placeholder.svg';
+                                }
+                            ?>" 
                                  class="img-fluid rounded" 
-                                 alt="<?php echo htmlspecialchars($restaurant['name']); ?>">
+                                 alt="<?php echo htmlspecialchars($restaurant['name']); ?>"
+                                 style="object-fit: cover; max-height: 120px;"
+                                 onerror="this.src='<?php echo BASE_URL; ?>public/images/restaurant-placeholder.svg'">
                         </div>
                         <div class="col-md-8">
                             <h1 class="h2 mb-2">Reservar Mesa en <?php echo htmlspecialchars($restaurant['name']); ?></h1>

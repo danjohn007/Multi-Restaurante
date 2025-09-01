@@ -71,6 +71,7 @@ const App = {
     // Submit form via AJAX
     submitFormAjax: function(form) {
         const formData = new FormData(form);
+        formData.append('ajax', '1'); // Add ajax parameter
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         
@@ -89,15 +90,26 @@ const App = {
                 if (data.redirect) {
                     setTimeout(() => {
                         window.location.href = data.redirect;
-                    }, 1000);
+                    }, 1500); // Slightly longer delay to see success message
+                } else if (data.reload) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
                 }
             } else {
                 this.showAlert('danger', data.message || 'Error en la operación');
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
         })
         .catch(error => {
             console.error('Error:', error);
             this.showAlert('danger', 'Error de conexión');
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
         })
         .finally(() => {
             // Restore button state
