@@ -281,18 +281,18 @@
             </div>
         </div>
 
-        <!-- Cuisine Distribution Chart -->
+        <!-- Restaurant Activity Bar Chart -->
         <div class="col-xl-4 mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="fas fa-chart-pie text-warning"></i> Distribución de Cocinas
+                        <i class="fas fa-chart-bar text-primary"></i> Actividad de Restaurantes
                     </h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="cuisineChart" width="300" height="150"></canvas>
+                    <canvas id="activityChart" width="300" height="150"></canvas>
                     <div class="mt-3 text-center">
-                        <small class="text-muted">Tipos de cocina por restaurante</small>
+                        <small class="text-muted">Reservaciones por restaurante</small>
                     </div>
                 </div>
             </div>
@@ -353,6 +353,25 @@
         </div>
     </div>
 
+    <!-- Reservation Heatmap -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-fire text-danger"></i> Mapa de Calor - Reservaciones por Horario
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="reservationHeatmap" style="height: 300px;"></div>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">Patrones de reservaciones por día y hora</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Activity -->
     <?php if (!empty($recentRestaurants)): ?>
         <div class="row">
@@ -400,65 +419,160 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dashboard charts
-    initializeCuisineChart();
+    initializeActivityChart();
+    initializeReservationHeatmap();
 });
 
-function initializeCuisineChart() {
-    // Sample cuisine distribution data - in real app this would come from server
-    const cuisineData = {
-        labels: ['Italiana', 'Mexicana', 'Asiática', 'Americana', 'Mediterránea', 'Otros'],
+function initializeActivityChart() {
+    // Sample restaurant activity data - in real app this would come from server
+    const activityData = {
+        labels: <?php 
+            // Get restaurant names from stats
+            if (!empty($restaurantStats)) {
+                $names = array_slice(array_map(function($r) { 
+                    return substr($r['name'], 0, 10) . (strlen($r['name']) > 10 ? '...' : ''); 
+                }, $restaurantStats), 0, 6);
+                echo json_encode($names);
+            } else {
+                echo '["Rest. A", "Rest. B", "Rest. C", "Rest. D", "Rest. E"]';
+            }
+        ?>,
         datasets: [{
-            data: [
-                <?php 
-                // Generate sample cuisine distribution data
-                $totalRestaurants = $stats['total_restaurants'] ?? 10;
-                $distribution = [
-                    round($totalRestaurants * 0.25), // Italian
-                    round($totalRestaurants * 0.20), // Mexican  
-                    round($totalRestaurants * 0.15), // Asian
-                    round($totalRestaurants * 0.15), // American
-                    round($totalRestaurants * 0.10), // Mediterranean
-                    round($totalRestaurants * 0.15)  // Others
-                ];
-                echo implode(', ', $distribution);
-                ?>
-            ],
+            label: 'Reservaciones',
+            data: <?php 
+                // Get reservation counts from stats
+                if (!empty($restaurantStats)) {
+                    $reservations = array_slice(array_map(function($r) { 
+                        return $r['total_reservations']; 
+                    }, $restaurantStats), 0, 6);
+                    echo json_encode($reservations);
+                } else {
+                    echo '[12, 8, 15, 6, 10]';
+                }
+            ?>,
             backgroundColor: [
-                '#FF6384',
-                '#36A2EB', 
-                '#FFCE56',
-                '#4BC0C0',
-                '#9966FF',
-                '#FF9F40'
+                '#007bff',
+                '#28a745', 
+                '#ffc107',
+                '#dc3545',
+                '#6f42c1',
+                '#fd7e14'
             ],
-            borderWidth: 2,
-            borderColor: '#fff'
+            borderWidth: 1
         }]
     };
 
-    const ctx = document.getElementById('cuisineChart');
+    const ctx = document.getElementById('activityChart');
     if (ctx) {
         new Chart(ctx, {
-            type: 'doughnut',
-            data: cuisineData,
+            type: 'bar',
+            data: activityData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 10,
-                            usePointStyle: true,
-                            font: {
-                                size: 11
-                            }
-                        }
+                        display: false
                     }
                 },
-                cutout: '60%'
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
             }
         });
     }
+}
+
+function initializeReservationHeatmap() {
+    // Create a simple heatmap using HTML/CSS grid
+    const heatmapContainer = document.getElementById('reservationHeatmap');
+    if (!heatmapContainer) return;
+    
+    // Days of the week
+    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    // Hours from 11 AM to 10 PM
+    const hours = [];
+    for (let i = 11; i <= 22; i++) {
+        hours.push(i + ':00');
+    }
+    
+    // Generate sample heatmap data (0-10 intensity)
+    const heatmapData = [];
+    for (let day = 0; day < 7; day++) {
+        for (let hour = 0; hour < hours.length; hour++) {
+            // Simulate higher activity during evening hours and weekends
+            let intensity = Math.random() * 10;
+            if (day >= 5) intensity *= 1.5; // Weekend multiplier
+            if (hour >= 6 && hour <= 9) intensity *= 1.3; // Evening multiplier
+            intensity = Math.min(10, Math.round(intensity));
+            
+            heatmapData.push({
+                day: day,
+                hour: hour,
+                value: intensity,
+                dayName: days[day],
+                hourName: hours[hour]
+            });
+        }
+    }
+    
+    // Create heatmap HTML
+    let heatmapHTML = '<div style="display: grid; grid-template-columns: 50px repeat(' + hours.length + ', 1fr); gap: 2px; font-size: 12px;">';
+    
+    // Header row (empty cell + hours)
+    heatmapHTML += '<div></div>';
+    hours.forEach(hour => {
+        heatmapHTML += '<div style="text-align: center; padding: 5px; font-weight: bold;">' + hour + '</div>';
+    });
+    
+    // Data rows
+    days.forEach((day, dayIndex) => {
+        // Day label
+        heatmapHTML += '<div style="text-align: center; padding: 5px; font-weight: bold; display: flex; align-items: center; justify-content: center;">' + day + '</div>';
+        
+        // Hour cells for this day
+        hours.forEach((hour, hourIndex) => {
+            const dataPoint = heatmapData.find(d => d.day === dayIndex && d.hour === hourIndex);
+            const intensity = dataPoint ? dataPoint.value : 0;
+            const opacity = Math.max(0.1, intensity / 10);
+            const backgroundColor = `rgba(220, 53, 69, ${opacity})`; // Red with varying opacity
+            
+            heatmapHTML += `<div style="
+                background-color: ${backgroundColor}; 
+                padding: 8px; 
+                border-radius: 3px; 
+                text-align: center; 
+                color: ${intensity > 5 ? 'white' : 'black'};
+                font-size: 10px;
+                min-height: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                border: 1px solid rgba(0,0,0,0.1);
+            " title="${day} ${hour}: ${intensity} reservaciones">${intensity}</div>`;
+        });
+    });
+    
+    heatmapHTML += '</div>';
+    
+    // Add legend
+    heatmapHTML += '<div style="margin-top: 15px; text-align: center;">';
+    heatmapHTML += '<div style="display: inline-flex; align-items: center; gap: 10px;">';
+    heatmapHTML += '<span style="font-size: 12px;">Menos actividad</span>';
+    for (let i = 1; i <= 10; i++) {
+        const opacity = i / 10;
+        heatmapHTML += `<div style="width: 15px; height: 15px; background-color: rgba(220, 53, 69, ${opacity}); border: 1px solid rgba(0,0,0,0.2);"></div>`;
+    }
+    heatmapHTML += '<span style="font-size: 12px;">Más actividad</span>';
+    heatmapHTML += '</div>';
+    heatmapHTML += '</div>';
+    
+    heatmapContainer.innerHTML = heatmapHTML;
 }
 </script>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservación Demo - Multi-Restaurante</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-utensils"></i> Multi-Restaurante
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="badge bg-light text-primary px-3 py-2">
+                    <i class="fas fa-check-circle"></i> Demo Confirmación
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Success Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-success d-flex align-items-center">
+                    <i class="fas fa-check-circle fa-3x me-3"></i>
+                    <div>
+                        <h4 class="alert-heading mb-1">¡Reservación Confirmada!</h4>
+                        <p class="mb-0">Su reservación ha sido procesada exitosamente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Details -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-check text-success"></i> Detalles de la Reservación
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Información de la Reservación</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>ID Reservación:</strong></td>
+                                        <td>#12345</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fecha:</strong></td>
+                                        <td>15/12/2024</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Hora:</strong></td>
+                                        <td>19:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Personas:</strong></td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Estado:</strong></td>
+                                        <td>
+                                            <span class="badge bg-success">Confirmada</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Información del Cliente</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Nombre:</strong></td>
+                                        <td>Juan Pérez</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Teléfono:</strong></td>
+                                        <td>+52 55 1234 5678</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Email:</strong></td>
+                                        <td>juan.perez@email.com</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Solicitudes:</strong></td>
+                                        <td>Mesa cerca de la ventana</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Restaurant Info Sidebar -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-store"></i> Información del Restaurante
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <div class="bg-primary rounded" style="width: 80px; height: 80px; margin: 0 auto;"></div>
+                        </div>
+                        
+                        <h5 class="text-center">La Parrilla Dorada</h5>
+                        <p class="text-muted text-center mb-3">
+                            Los mejores cortes y parrilladas de la ciudad
+                        </p>
+                        
+                        <div class="mb-2">
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                            <small>Av. Reforma 123, Ciudad de México</small>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <i class="fas fa-phone text-primary"></i>
+                            <small>+52 55 9876 5432</small>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <i class="fas fa-clock text-primary"></i>
+                            <small>12:00 - 23:00</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="#" class="btn btn-primary">
+                                <i class="fas fa-home"></i> Volver al Inicio
+                            </a>
+                            
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="fas fa-store"></i> Ver Restaurante
+                            </a>
+                            
+                            <a href="#" class="btn btn-outline-secondary">
+                                <i class="fas fa-plus"></i> Nueva Reservación
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Important Information -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> Información Importante</h6>
+                    <ul class="mb-0">
+                        <li>Por favor llegue 10 minutos antes de su hora de reservación</li>
+                        <li>Si necesita cancelar o modificar su reservación, contacte al restaurante directamente</li>
+                        <li>Conserve este número de reservación para futuras referencias</li>
+                        <li>En caso de retraso, contacte al restaurante para mantener su mesa</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fix Details -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-success">
+                    <h5><i class="fas fa-tools"></i> Reservación - Flujo Reparado</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-bug text-danger"></i> Problema Anterior:</h6>
+                            <ul>
+                                <li>Página de confirmación faltante</li>
+                                <li>Ruta de confirmación no configurada</li>
+                                <li>Redirección a página inexistente (404)</li>
+                                <li>Error de sintaxis JavaScript en app.js</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-check text-success"></i> Solución Implementada:</h6>
+                            <ul>
+                                <li>Página de confirmación completa creada</li>
+                                <li>Ruta /reservation/confirmation/(\d+) agregada</li>
+                                <li>Controller actualizado para cargar datos</li>
+                                <li>Sintaxis JavaScript corregida</li>
+                                <li>Flujo completo de confirmación funcional</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

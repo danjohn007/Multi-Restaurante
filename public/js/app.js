@@ -110,12 +110,6 @@ const App = {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         });
-        })
-        .finally(() => {
-            // Restore button state
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        });
     },
     
     // Load content via AJAX
