@@ -255,6 +255,141 @@ class HostessController extends Controller {
         }
     }
     
+    /**
+     * Quick check-in endpoint for AJAX requests
+     * Returns reservations pending check-in for today
+     */
+    public function quickCheckinData() {
+        $restaurantId = $this->getUserRestaurantId();
+        
+        if (!$restaurantId) {
+            $this->jsonResponse(['success' => false, 'message' => 'No tienes un restaurante asignado']);
+            return;
+        }
+        
+        try {
+            $reservationModel = $this->loadModel('Reservation');
+            $pendingReservations = $reservationModel->getPendingCheckins($restaurantId);
+            
+            $this->jsonResponse([
+                'success' => true,
+                'reservations' => $pendingReservations
+            ]);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+    
+    /**
+     * Get table status for AJAX requests
+     */
+    public function tableStatusData() {
+        $restaurantId = $this->getUserRestaurantId();
+        
+        if (!$restaurantId) {
+            $this->jsonResponse(['success' => false, 'message' => 'No tienes un restaurante asignado']);
+            return;
+        }
+        
+        try {
+            $tableModel = $this->loadModel('Table');
+            $tables = $tableModel->getTablesWithStatus($restaurantId);
+            
+            $this->jsonResponse([
+                'success' => true,
+                'tables' => $tables
+            ]);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+    
+    /**
+     * Create new reservation endpoint
+     */
+    public function createReservation() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Método no permitido'], 405);
+            return;
+        }
+        
+        $restaurantId = $this->getUserRestaurantId();
+        
+        if (!$restaurantId) {
+            $this->jsonResponse(['success' => false, 'message' => 'No tienes un restaurante asignado']);
+            return;
+        }
+        
+        try {
+            $reservationModel = $this->loadModel('Reservation');
+            
+            // Validate required fields
+            $required = ['customer_name', 'customer_phone', 'party_size', 'reservation_date', 'reservation_time'];
+            foreach ($required as $field) {
+                if (empty($_POST[$field])) {
+                    throw new Exception("El campo {$field} es requerido");
+                }
+            }
+            
+            // Prepare reservation data
+            $reservationData = [
+                'restaurant_id' => $restaurantId,
+                'customer_name' => $_POST['customer_name'],
+                'customer_phone' => $_POST['customer_phone'],
+                'customer_email' => $_POST['customer_email'] ?? null,
+                'party_size' => (int)$_POST['party_size'],
+                'reservation_date' => $_POST['reservation_date'],
+                'reservation_time' => $_POST['reservation_time'],
+                'special_requests' => $_POST['special_requests'] ?? null,
+                'status' => 'confirmed',
+                'created_by' => $_SESSION['user']['id'],
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            
+            $reservationId = $reservationModel->create($reservationData);
+            
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Reservación creada exitosamente',
+                'reservation_id' => $reservationId
+            ]);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+    
+    /**
+     * Get reservation details for modal view
+     */
+    public function reservationDetails($reservationId) {
+        $restaurantId = $this->getUserRestaurantId();
+        
+        if (!$restaurantId) {
+            $this->jsonResponse(['success' => false, 'message' => 'No tienes un restaurante asignado']);
+            return;
+        }
+        
+        try {
+            $reservationModel = $this->loadModel('Reservation');
+            $reservation = $reservationModel->find($reservationId);
+            
+            if (!$reservation || $reservation['restaurant_id'] != $restaurantId) {
+                $this->jsonResponse(['success' => false, 'message' => 'Reservación no encontrada']);
+                return;
+            }
+            
+            $this->jsonResponse([
+                'success' => true,
+                'reservation' => $reservation
+            ]);
+            
+        } catch (Exception $e) {
+            $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
 
 }
 ?>
