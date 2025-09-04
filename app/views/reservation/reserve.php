@@ -543,7 +543,7 @@ function showReservationConfirmation(form) {
                                 <p><strong>Fecha:</strong> ${formattedDate}</p>
                                 <p><strong>Hora:</strong> ${reservationTime}</p>
                                 <p><strong>Personas:</strong> ${partySize}</p>
-                                <p><strong>Mesa:</strong> ${selectedTable.name} (Capacidad: ${selectedTable.capacity})</p>
+                                <p><strong>Mesa:</strong> Mesa ${selectedTable.table_number} (Capacidad: ${selectedTable.capacity})</p>
                             </div>
                         </div>
                         ${specialRequests !== 'Ninguna' ? `
