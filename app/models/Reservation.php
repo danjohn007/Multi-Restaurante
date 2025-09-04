@@ -28,6 +28,24 @@ class Reservation extends Model {
         return $stmt->fetchAll();
     }
     
+    /**
+     * Get reservations pending check-in for today
+     * Added for hostess dashboard quick check-in functionality
+     */
+    public function getPendingCheckins($restaurantId) {
+        $stmt = $this->db->prepare("
+            SELECT r.*, c.first_name, c.last_name, c.phone as customer_phone_alt
+            FROM reservations r
+            LEFT JOIN customers c ON r.customer_id = c.id
+            WHERE r.restaurant_id = ? 
+            AND r.reservation_date = CURDATE() 
+            AND r.status = 'confirmed'
+            ORDER BY r.reservation_time ASC
+        ");
+        $stmt->execute([$restaurantId]);
+        return $stmt->fetchAll();
+    }
+    
     public function getTodayCount($restaurantId) {
         $stmt = $this->db->prepare("
             SELECT COUNT(*) FROM reservations 
