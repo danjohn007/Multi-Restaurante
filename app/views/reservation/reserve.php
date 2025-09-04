@@ -586,7 +586,17 @@ function showReservationConfirmation(form) {
     
     // Handle confirmation
     document.getElementById('confirmReservationBtn').addEventListener('click', function() {
+        const confirmBtn = this;
+        const originalText = confirmBtn.innerHTML;
+        
+        // Disable button to prevent double submission
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+        
         modal.hide();
+        
+        // Show processing alert
+        App.showAlert('info', 'Procesando su reservación...', 2000);
         
         // Now submit the form
         const formData = new FormData(form);
