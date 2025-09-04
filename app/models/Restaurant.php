@@ -6,20 +6,41 @@ class Restaurant extends Model {
     
     public function search($query) {
         $searchTerms = '%' . $query . '%';
-        $stmt = $this->db->prepare("
-            SELECT *, MATCH(name, description, keywords) AGAINST(?) as relevance 
-            FROM restaurants 
-            WHERE is_active = 1 AND (
-                name LIKE ? OR 
-                description LIKE ? OR 
-                keywords LIKE ? OR 
-                food_type LIKE ? OR
-                MATCH(name, description, keywords) AGAINST(?)
-            )
-            ORDER BY relevance DESC, name ASC
-        ");
-        $stmt->execute([$query, $searchTerms, $searchTerms, $searchTerms, $searchTerms, $query]);
-        return $stmt->fetchAll();
+        
+        // Try FULLTEXT search first, fallback to LIKE if FULLTEXT index doesn't exist
+        try {
+            $stmt = $this->db->prepare("
+                SELECT *, MATCH(name, description, keywords) AGAINST(?) as relevance 
+                FROM restaurants 
+                WHERE is_active = 1 AND (
+                    name LIKE ? OR 
+                    description LIKE ? OR 
+                    keywords LIKE ? OR 
+                    food_type LIKE ? OR
+                    MATCH(name, description, keywords) AGAINST(?)
+                )
+                ORDER BY relevance DESC, name ASC
+            ");
+            $stmt->execute([$query, $searchTerms, $searchTerms, $searchTerms, $searchTerms, $query]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            // Fallback to LIKE-only search if FULLTEXT index doesn't exist
+            if (strpos($e->getMessage(), '1191') !== false || strpos($e->getMessage(), 'fulltext') !== false) {
+                $stmt = $this->db->prepare("
+                    SELECT * FROM restaurants 
+                    WHERE is_active = 1 AND (
+                        name LIKE ? OR 
+                        description LIKE ? OR 
+                        keywords LIKE ? OR 
+                        food_type LIKE ?
+                    )
+                    ORDER BY name ASC
+                ");
+                $stmt->execute([$searchTerms, $searchTerms, $searchTerms, $searchTerms]);
+                return $stmt->fetchAll();
+            }
+            throw $e; // Re-throw if it's a different error
+        }
     }
     
     public function getActive() {
