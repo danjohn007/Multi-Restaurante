@@ -501,6 +501,12 @@ function resetAvailability() {
 
 // Show reservation confirmation popup
 function showReservationConfirmation(form) {
+    // Debug logging
+    console.log('showReservationConfirmation called', { 
+        form: form, 
+        selectedTable: selectedTable 
+    });
+    
     const formData = new FormData(form);
     const customerName = formData.get('customer_name');
     const customerPhone = formData.get('customer_phone');
@@ -589,6 +595,21 @@ function showReservationConfirmation(form) {
         const confirmBtn = this;
         const originalText = confirmBtn.innerHTML;
         
+        // Validate selectedTable before proceeding
+        if (!selectedTable) {
+            App.showAlert('danger', 'Error: No se ha seleccionado ninguna mesa. Por favor, refresque la página e intente de nuevo.');
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalText;
+            return;
+        }
+        
+        if (!selectedTable.id) {
+            App.showAlert('danger', 'Error: Información de mesa inválida. Por favor, seleccione una mesa nuevamente.');
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalText;
+            return;
+        }
+        
         // Disable button to prevent double submission
         confirmBtn.disabled = true;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
@@ -598,12 +619,21 @@ function showReservationConfirmation(form) {
         // Show processing alert
         App.showAlert('info', 'Procesando su reservación...', 2000);
         
-        // Now submit the form
-        const formData = new FormData(form);
-        formData.append('selected_table_id', selectedTable.id);
-        formData.append('ajax', '1');
-        
-        App.submitFormAjaxWithData(form, formData);
+        try {
+            // Now submit the form
+            const formData = new FormData(form);
+            formData.append('selected_table_id', selectedTable.id);
+            formData.append('ajax', '1');
+            
+            App.submitFormAjaxWithData(form, formData);
+        } catch (error) {
+            console.error('Error submitting reservation:', error);
+            App.showAlert('danger', 'Error al procesar la reservación. Por favor, intente de nuevo.');
+            
+            // Restore button state
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalText;
+        }
     });
 }
 </script>
