@@ -215,6 +215,12 @@
                                        class="btn btn-outline-primary">
                                         <i class="fas fa-utensils"></i> Reservar Mesa
                                     </a>
+                                    <a href="https://wa.me/5218143806011?text=<?php echo urlencode('Hola, deseo reservar en ' . htmlspecialchars($restaurant['name'])); ?>" 
+                                       class="btn btn-success" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer">
+                                        <i class="fab fa-whatsapp"></i> WhatsApp
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -369,6 +375,12 @@ function updateRestaurantsList(restaurants) {
                         <a href="<?php echo BASE_URL; ?>restaurant/${restaurant.id}/reserve" 
                            class="btn btn-outline-primary">
                             <i class="fas fa-utensils"></i> Reservar Mesa
+                        </a>
+                        <a href="https://wa.me/5218143806011?text=${encodeURIComponent('Hola, deseo reservar en ' + restaurant.name)}" 
+                           class="btn btn-success" 
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
                         </a>
                     </div>
                 </div>
